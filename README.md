@@ -1,5 +1,21 @@
 # AlmufidCrm
 
+MEAN Stack Application.
+Prerequiste - Install Mongo DB in local env and run https://github.com/nagarajan1991/almufidCRM/blob/master/mongodb_Script.txt.
+
+Open the project in Visual Studio Code.
+
+Execute the below Command in Command Terminal to install and add all the plugins used in the project.
+> npm install -save.
+
+To run the project exectute the below commands.
+1st Terminal
+> npm run start:server
+
+2nd terminal
+> ng serve -o
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.1.
 
 ## Development server
