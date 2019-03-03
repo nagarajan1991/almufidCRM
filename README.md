@@ -19,7 +19,7 @@ Backend in 1st Terminal - Node,Express and MongoDB
 Fron end in 2nd terminal - Angular.
 > ng serve -o
 
-Once after the application is launched succussfully use
+Once after the application is launched succussfully use the below creds.  
 **username: admin@test.com
 password: admin**
 
