@@ -20,8 +20,8 @@ Fron end in 2nd terminal - Angular.
 > ng serve -o
 
 Once after the application is launched succussfully use
-username: admin@test.com
-password: admin
+**username: admin@test.com
+password: admin**
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.1.
 
