@@ -9,10 +9,12 @@ Execute the below Command in Command Terminal to install and add all the plugins
 > npm install -save.
 
 To run the project exectute the below commands.
-1st Terminal
+Make sure mongoDB services are up and running in services.msc
+
+Backend in 1st Terminal - Node,Express and MongoDB
 > npm run start:server
 
-2nd terminal
+Fron end in 2nd terminal - Angular.
 > ng serve -o
 
 
