@@ -1,4 +1,6 @@
-# AlmufidCrm
+# Almufid Business Box 
+CRM application used by Salesman and SalesManager to manage thier customer Visits.
+Applciation is accessible in PC/Tablet and in Mobile.
 
 MEAN Stack Application.
 Prerequiste - Install Mongo DB in local env and run https://github.com/nagarajan1991/almufidCRM/blob/master/mongodb_Script.txt.
