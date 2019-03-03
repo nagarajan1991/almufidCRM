@@ -1,5 +1,6 @@
 > use almufid-crm
-db.createUser({  
+
+>db.createUser({  
  user:"almufid",
  pwd:"almufid",
  roles:[  
@@ -16,10 +17,11 @@ db.createUser({
 
 
 
-db.createCollection("visits")
+>db.createCollection("visits")
+
+>db.createCollection("users")
 
 
-
-db.users.insert({"fullname":"admin","email":"admin@test.com","password":"$2b$10$bUCMeunvhMHTI6ny8Sv70.qDcs9sRMgGCUEuDSmo7.9ECaLxiV6VG","userrolevalue":"SalesManager","mobile":"123456789","__v":0})
+>db.users.insert({"fullname":"admin","email":"admin@test.com","password":"$2b$10$bUCMeunvhMHTI6ny8Sv70.qDcs9sRMgGCUEuDSmo7.9ECaLxiV6VG","userrolevalue":"SalesManager","mobile":"123456789","__v":0})
 
 
