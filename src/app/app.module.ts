@@ -15,6 +15,8 @@ import { AngularMaterialModule } from './angular-material.module';
 import { VisitsModule } from './visits/visits.module';
 import { DashBoardComponent } from './dashboard/dashboard.component';
 import { AgmCoreModule } from '@agm/core';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { AgmCoreModule } from '@agm/core';
     HttpClientModule,
     AngularMaterialModule,
     VisitsModule,
+    MatAutocompleteModule,
     AgmCoreModule.forRoot ({
       apiKey: 'AIzaSyB06YwnmYDLI9EhtsdtFOTbUA8JGoW90r0'
     })

@@ -48,13 +48,22 @@ exports.updateVisit = (req, res, next) => {
 exports.getVisits = (req, res, next) => {
   const pageSize = +req.query.pageSize;
   const currentPage = +req.query.page;
-  const postQuery = Visit.find();
+  const searchValue = req.query.searchValue;
+  let postQuery=null;
+
+  if(searchValue){
+    postQuery = Visit.find({customer: new RegExp(searchValue, 'i')});
+  }else{
+     postQuery = Visit.find();
+  }
+  
   let fetchedVisits;
   if (pageSize && currentPage) {
     postQuery
       .skip(pageSize * (currentPage - 1))
       .limit(pageSize)
   }
+  
   postQuery
   .then(documents => {
     fetchedVisits = documents;

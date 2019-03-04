@@ -1,16 +1,23 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onSaveVisit(visitForm)" #visitForm="ngForm"  *ngIf="!isLoading">
+  <form  (submit)="onSaveVisit(visitForm)" #visitForm="ngForm"  *ngIf="!isLoading">
       <mat-form-field>
           <input
           matInput
           type="text"
           name="customer"
+          [formControl]="customer"
           [ngModel]="visit?.customer"
           required
           placeholder="Customer"
-          #title="ngModel">
-          <mat-error *ngIf="title.invalid">Please enter Customer Name/Contact Name</mat-error>
+          [matAutocomplete]="auto"
+          >
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option (onSelectionChange)="selectVisit(option)" *ngFor="let option of visits$ | async" [value]="option.customer">
+              {{option.customer}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="customer.invalid">Please enter Customer Name/Contact Name</mat-error>
 
         </mat-form-field>
 

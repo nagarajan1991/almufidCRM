@@ -16,6 +16,8 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+
 
 
 @NgModule({
@@ -33,6 +35,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     RouterModule,
     AgmCoreModule,
     NgbModalModule,
+    MatAutocompleteModule,
     FlatpickrModule.forRoot(),
     BrowserAnimationsModule,
     CalendarModule.forRoot({

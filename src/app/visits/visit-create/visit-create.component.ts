@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy, NgModule } from '@angular/core';
-
+import { FormControl } from '@angular/forms';
 import { NgForm } from '@angular/forms';
 import { VisitsService } from '../visits.service';
-import { ActivatedRoute, ParamMap  } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Subscription, Observable } from 'rxjs';
 import { Visit } from '../visit.model';
 import { AuthService } from 'src/app/auth/auth.service';
 import { MapsAPILoader } from '@agm/core';
 
-@Component ({
+@Component({
   selector: 'app-visit-create',
   templateUrl: './visit-create.component.html',
-  styleUrls : ['./visit-create.component.css']
+  styleUrls: ['./visit-create.component.css']
 })
 
 
@@ -19,7 +19,8 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
 
 
 
-
+  customer = new FormControl();
+  visits$: Observable<Visit[]>;
   visit: Visit;
   isLoading = false;
   private mode = 'create';
@@ -29,22 +30,21 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
   lat: any;
   lng: any;
 
-  constructor (
+  constructor(
     public visitsService: VisitsService,
     public route: ActivatedRoute,
     private authService: AuthService,
     public mapsAPILoader: MapsAPILoader
 
 
-    ) {
-      if (navigator)
-      {
-      navigator.geolocation.getCurrentPosition( pos => {
-          this.lng = +pos.coords.longitude;
-          this.lat = +pos.coords.latitude;
-        });
-      }
+  ) {
+    if (navigator) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        this.lng = +pos.coords.longitude;
+        this.lat = +pos.coords.latitude;
+      });
     }
+  }
 
 
   ngOnInit() {
@@ -71,15 +71,29 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
             date: null,
             lat: visitData.lat,
             lng: visitData.lng,
-            creator: visitData.creator };
+            creator: visitData.creator
+          };
         });
       } else {
         this.mode = 'create';
         this.visitId = null;
       }
     });
+
+    this.customer.valueChanges.subscribe(searchValue => {
+      if (searchValue) {
+        this.searchVisit(searchValue);
+      }
+    });
   }
 
+  searchVisit(searchValue) {
+    this.visits$ = this.visitsService.getVisitsBySearch(searchValue);
+  }
+
+  selectVisit(visit: Visit) {
+    this.visit = visit;
+  }
 
   onSaveVisit(form: NgForm) {
     if (form.invalid) {
@@ -95,7 +109,7 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy ()  {
+  ngOnDestroy() {
     this.authStatusSub.unsubscribe();
   }
 }
