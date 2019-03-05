@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs/operators';
+import { GLOBALS, Global } from '../visits/global';
+import { Inject } from '@angular/core';
 
 const BACKEND_URL = environment.apiUrl + '/user/';
 
@@ -20,7 +22,10 @@ export class AuthService {
   private userrole: string;
   private authStatusListener = new Subject<boolean>();
 
-  constructor(private http: HttpClient, private router: Router) { }
+
+  constructor(private http: HttpClient,
+    @Inject(GLOBALS) public g: Global,
+    private router: Router) { }
 
   getToken() {
     return this.token;
@@ -70,6 +75,7 @@ export class AuthService {
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
           console.log(expirationDate);
           this.saveAuthData(token, expirationDate, this.userId);
+          this.g.user = Object.assign({}, response);
           this.router.navigate(['/dashboard']);
         }
       }, error => {

@@ -1,35 +1,42 @@
 <img src="src\assets\images\animat-rocket-color.gif" alt="Rocket" class="center">
 <p class="mat-body-1" [ngStyle]="{'text-align': 'center'}">
-  Page under Construction <br/>
-  We are Buidling Something Awesome. Watch this space for more!
+  Page under Construction
+  <br/> We are Buidling Something Awesome. Watch this space for more!
 </p>
 <div class="container">
   <div class="row">
-  <div class="col-md-3">
-    <div class="card-counter primary">
-      <i class="fa fa-code-fork"></i>
-      <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
-      <span class="count-name">Total Users</span>
+    <div class="col-md-4">
+      <div class="card-counter primary">
+        <i class="fa fa-code-fork"></i>
+        <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
+        <span class="count-name">Total Users</span>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-counter danger">
+        <i class="fa fa-ticket"></i>
+        <span class="count-numbers">599/{{(visitsMonthly$ | async)?.visitCount}}</span>
+        <span class="count-name">Projected/Actual Monthly Visits</span>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-counter success">
+        <i class="fa fa-database"></i>
+        <span class="count-numbers">6875/{{(visitsYearly$ | async)?.visitCount}}</span>
+        <span class="count-name">Projected/Actual Yearly Visits</span>
+      </div>
     </div>
   </div>
-
-  <div class="col-md-3">
-    <div class="card-counter danger">
-      <i class="fa fa-ticket"></i>
-      <span class="count-numbers">599</span>
-      <span class="count-name">Instances</span>
-    </div>
+  <div *ngIf="g.userrolevalue==='Sales manager'" class="row">
+    <h4>View User Details</h4>
+    <mat-form-field>
+      <mat-select placeholder="Users">
+        <mat-option *ngFor="let user of (users$ |async)?.users" [value]="user.fullname">
+          {{user.fullname}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-
-  <div class="col-md-3">
-    <div class="card-counter success">
-      <i class="fa fa-database"></i>
-      <span class="count-numbers">6875</span>
-      <span class="count-name">Data</span>
-    </div>
-  </div>
-
 </div>
-</div>
-
-

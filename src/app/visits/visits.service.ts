@@ -48,6 +48,29 @@ export class VisitsService {
       });
   }
 
+  getVisitsStatistics(period?: string): Observable<any> {
+    const queryParams = `?period=${period}`;
+    return this.http.get<{ message: string, visits: any, maxVisits: number }>(
+      BACKEND_URL + queryParams
+    )
+      .pipe(map((visitData) => {
+        return {
+          visits: visitData.visits.map(visit => {
+            return {
+              customer: visit.customer,
+              contact_no: visit.contact_no,
+              remarks: visit.remarks,
+              id: visit._id,
+              date: visit.date,
+              lat: visit.lat,
+              lng: visit.lng,
+              creator: visit.creator
+            };
+          }),
+          visitCount: visitData.visits.length
+        };
+      }));
+  }
   getVisitsBySearch(searchValue: string): Observable<Visit[]> {
     const queryParams = `?searchValue=${searchValue}`;
     return this.http.get<{ message: string, visits: any, maxVisits: number }>(

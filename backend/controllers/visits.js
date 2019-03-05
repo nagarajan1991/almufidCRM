@@ -49,11 +49,28 @@ exports.getVisits = (req, res, next) => {
   const pageSize = +req.query.pageSize;
   const currentPage = +req.query.page;
   const searchValue = req.query.searchValue;
+  const period = req.query.period;
   let postQuery=null;
 
   if(searchValue){
     postQuery = Visit.find({customer: new RegExp(searchValue, 'i')});
-  }else{
+  }else if(period){ 
+    let date = new Date();
+    let firstDay=null;
+    let lastDay =null;
+    if(period=='Monthly'){
+      
+       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+    }
+    if(period=='Yearly'){
+      firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
+    }
+    postQuery = Visit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
+  }
+  else{
      postQuery = Visit.find();
   }
   

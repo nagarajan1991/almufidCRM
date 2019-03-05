@@ -3,6 +3,9 @@ import { AuthService } from '../auth/auth.service';
 import { OnInit } from '@angular/core';
 import { AuthData } from '../auth/auth.data.model';
 import { Observable } from 'rxjs';
+import { VisitsService } from '../visits/visits.service';
+import { Inject } from '@angular/core';
+import { GLOBALS, Global } from '../visits/global';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,11 +16,17 @@ import { Observable } from 'rxjs';
 export class DashBoardComponent implements OnInit {
 
   users$: Observable<any>;
-  constructor(private authService: AuthService) {
+  visitsMonthly$: Observable<any>;
+  visitsYearly$: Observable<any>;
+  constructor(private authService: AuthService,
+  @Inject(GLOBALS) public g: Global,
+  private visitService: VisitsService) {
 
   }
   ngOnInit(): void {
     this.users$ = this.authService.getUsers();
+    this.visitsMonthly$ = this.visitService.getVisitsStatistics('Monthly');
+    this.visitsYearly$ = this.visitService.getVisitsStatistics('Yearly');
   }
 
 }
