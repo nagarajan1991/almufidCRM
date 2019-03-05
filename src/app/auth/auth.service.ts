@@ -76,7 +76,9 @@ export class AuthService {
           console.log(expirationDate);
           this.saveAuthData(token, expirationDate, this.userId);
           this.g.user = Object.assign({}, response);
+          localStorage.setItem('currentUser',JSON.stringify(this.g.user));
           this.router.navigate(['/dashboard']);
+          
         }
       }, error => {
         this.authStatusListener.next(false);
@@ -150,7 +152,7 @@ export class AuthService {
     };
   }
   getUsers(searchValue?: string) {
-    const queryParams = `?searchValue=${searchValue}`;
+    const queryParams = searchValue?`?searchValue=${searchValue}`:'';
     return this.http.get<{ message: string, users: any, maxUsers: number }>(
       BACKEND_URL + 'users' + queryParams
     )
