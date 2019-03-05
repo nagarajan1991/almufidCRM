@@ -6,10 +6,11 @@ import { AuthData } from './auth.data.model';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
+import { map } from 'rxjs/operators';
 
 const BACKEND_URL = environment.apiUrl + '/user/';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private isAuthenticated = false;
   private token: string;
@@ -19,7 +20,7 @@ export class AuthService {
   private userrole: string;
   private authStatusListener = new Subject<boolean>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   getToken() {
     return this.token;
@@ -39,7 +40,7 @@ export class AuthService {
 
 
   createUser(fullname: string, email: string, password: string, userrolevalue: string, mobile: string) {
-    const authData: AuthData = { fullname: fullname, email: email, password: password, userrolevalue: userrolevalue, mobile: mobile};
+    const authData: AuthData = { fullname: fullname, email: email, password: password, userrolevalue: userrolevalue, mobile: mobile };
     this.http
       .post(BACKEND_URL + '/signup', authData)
       .subscribe(() => {
@@ -49,31 +50,31 @@ export class AuthService {
       });
   }
 
-  login(fullname: string, email: string, password: string, userrolevalue: string,  mobile: string) {
-    const authData: AuthData = { fullname: fullname, email: email, password: password, userrolevalue: userrolevalue,  mobile: mobile};
-    this.http.post<{token: string, expiresIn: number, userId: string, userrolevalue: string}>(
+  login(fullname: string, email: string, password: string, userrolevalue: string, mobile: string) {
+    const authData: AuthData = { fullname: fullname, email: email, password: password, userrolevalue: userrolevalue, mobile: mobile };
+    this.http.post<{ token: string, expiresIn: number, userId: string, userrolevalue: string }>(
       BACKEND_URL + '/login',
       authData)
-    .subscribe(response => {
-      const token = response.token;
-      this.token = token;
-      if (token) {
-        const expiresInDuration = response.expiresIn;
-        this.setAuthTimer(expiresInDuration);
-        this.isAuthenticated = true;
-        this.userId = response.userId;
-        this.authStatusListener.next(true);
-        this.email = authData.email;
-        this.userrole = response.userrolevalue;
-        const now = new Date();
-        const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-        console.log(expirationDate);
-        this.saveAuthData(token, expirationDate, this.userId);
-        this.router.navigate(['/dashboard']);
-      }
-    }, error => {
-      this.authStatusListener.next(false);
-    });
+      .subscribe(response => {
+        const token = response.token;
+        this.token = token;
+        if (token) {
+          const expiresInDuration = response.expiresIn;
+          this.setAuthTimer(expiresInDuration);
+          this.isAuthenticated = true;
+          this.userId = response.userId;
+          this.authStatusListener.next(true);
+          this.email = authData.email;
+          this.userrole = response.userrolevalue;
+          const now = new Date();
+          const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
+          console.log(expirationDate);
+          this.saveAuthData(token, expirationDate, this.userId);
+          this.router.navigate(['/dashboard']);
+        }
+      }, error => {
+        this.authStatusListener.next(false);
+      });
 
   }
 
@@ -141,6 +142,25 @@ export class AuthService {
       email: email,
       userrole: userrole
     };
+  }
+  getUsers(searchValue?: string) {
+    const queryParams = `?searchValue=${searchValue}`;
+    return this.http.get<{ message: string, users: any, maxUsers: number }>(
+      BACKEND_URL + 'users' + queryParams
+    )
+      .pipe(map((userData) => {
+        return {
+          users: userData.users.map(user => {
+            return {
+              fullname: user.fullname,
+              email: user.email,
+              userrolevalue: user.userrolevalue,
+              mobile: user.mobile
+            };
+          }),
+          userCount: userData.maxUsers
+        };
+      }));
   }
 }
 

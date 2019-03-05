@@ -64,3 +64,34 @@ exports.userLogin = (req, res, next) => {
     });
   });
   };
+
+  exports.getUsers = (req, res, next) => {
+    const searchValue = req.query.searchValue;
+    let postQuery=null;
+  
+    if(searchValue){
+      postQuery = User.find({customer: new RegExp(searchValue, 'i')});
+    }else{
+       postQuery = User.find();
+    }
+    
+    let fetchedUsers;
+    
+    postQuery
+    .then(documents => {
+      fetchedUsers = documents;
+      return User.count();
+    }).then(count => {
+        res.status(200).json({
+          message: "Users fetched successfully",
+          users: fetchedUsers,
+          maxUsers: count
+        });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching Users Failed!"
+      });
+    });
+  };
+  
