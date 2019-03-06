@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, NgModule } from '@angular/core';
 import { PageEvent } from '@angular/material';
 import { Subscription } from 'rxjs';
-
+import { utils, write, WorkBook, WorkSheet, JSON2SheetOpts } from 'xlsx';
 import { Visit } from '../visit.model';
 import { VisitsService } from '../visits.service';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -9,51 +9,54 @@ import { AuthService } from 'src/app/auth/auth.service';
 
 
 
-@Component ({
+@Component({
   selector: 'app-visit-list',
   templateUrl: './visit-list.component.html',
-  styleUrls : ['./visit-list.component.css']
+  styleUrls: ['./visit-list.component.css']
 })
 
 
 export class VisitListComponent implements OnInit, OnDestroy {
+  public url: string;
   // visits = [
   //   {title: 'My First Visit', content: 'Filler1'},
   //   {title: 'My Second Visit', content: 'Filler2'},
   //   {title: 'My Third Visit', content: 'Filler3'}
   // ];
 
- visits: Visit[] = [];
- isLoading = false;
- totalVisits = 0;
- visitsPerPage = 10;
- currentPage = 1;
- pageSizeOptions = [10, 20, 50];
- userIsAuthenticated = false;
- userId: string;
- private visitsSubb: Subscription;
- private authStatusSub: Subscription;
+  fromDate: Date;
+  toDate: Date;
+  visits: Visit[] = [];
+  isLoading = false;
+  totalVisits = 0;
+  visitsPerPage = 10;
+  currentPage = 1;
+  pageSizeOptions = [10, 20, 50];
+  userIsAuthenticated = false;
+  userId: string;
+  private visitsSubb: Subscription;
+  private authStatusSub: Subscription;
 
-  constructor (public visitsService: VisitsService, private authService: AuthService) {}
+  constructor(public visitsService: VisitsService, private authService: AuthService) { }
 
-  ngOnInit () {
+  ngOnInit() {
     this.isLoading = true;
     this.visitsService.getVisits(this.visitsPerPage, this.currentPage);
     this.userId = this.authService.getUserId();
     this.visitsSubb = this.visitsService
-    .getVisitUpdateListener()
-    .subscribe((visitData: {visits: Visit[], visitCount: number}) => {
-      this.isLoading = false;
-      this.totalVisits = visitData.visitCount;
-      this.visits = visitData.visits;
-    });
+      .getVisitUpdateListener()
+      .subscribe((visitData: { visits: Visit[], visitCount: number }) => {
+        this.isLoading = false;
+        this.totalVisits = visitData.visitCount;
+        this.visits = visitData.visits;
+      });
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authStatusSub = this.authService
-    .getAuthStatusListener()
-    .subscribe(isAuthenticated => {
-      this.userIsAuthenticated = isAuthenticated;
-      this.userId = this.authService.getUserId();
-    });
+      .getAuthStatusListener()
+      .subscribe(isAuthenticated => {
+        this.userIsAuthenticated = isAuthenticated;
+        this.userId = this.authService.getUserId();
+      });
 
   }
 
@@ -72,11 +75,40 @@ export class VisitListComponent implements OnInit, OnDestroy {
     });
   }*/
 
+  fetchVisits() {
+    this.visitsService.getVisits(this.visitsPerPage, this.currentPage, this.fromDate, this.toDate);
+    this.visitsSubb = this.visitsService
+      .getVisitUpdateListener()
+      .subscribe((visitData: { visits: Visit[], visitCount: number }) => {
+        this.isLoading = false;
+        this.totalVisits = visitData.visitCount;
+        this.visits = visitData.visits;
+      });
+  }
+  downloadVisits() {
+    this.visitsService.downLoadVisits(null, null, this.fromDate, this.toDate).subscribe(visits => {
+      const wbout: ArrayBuffer = write(visits, { bookType: 'xlsx', type: 'array' });
+      this.createBlobAndDownload(wbout, 'VisitsDataExport.xlsx');
+    });
+  }
   get userId_local(): any {
     return localStorage.getItem('userId');
-}
+  }
 
-  ngOnDestroy ()  {
+  private createBlobAndDownload(wbBuffer: ArrayBuffer, fileName: string): void {
+    const blob = new Blob([wbBuffer], { type: 'application/octet-stream' });
+    const dataUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.href = dataUrl;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(this.url);
+    document.body.removeChild(a);
+  }
+
+
+  ngOnDestroy() {
     this.visitsSubb.unsubscribe();
     this.authStatusSub.unsubscribe();
   }

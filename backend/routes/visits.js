@@ -12,6 +12,10 @@ router.put("/:id", checkAuth, VisitController.updateVisit);
 
 router.get("", VisitController.getVisits);
 
+router.get("/download", VisitController.getVisits);
+
+router.get("/planned", VisitController.getPlanVisits);
+
 router.get("/:id", VisitController.getVisit);
 
 router.delete("/:id", checkAuth, VisitController.deleteVisit);

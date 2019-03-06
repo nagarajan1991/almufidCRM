@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
 export class Global {
-    user: User = {};
+    user: any = {};
 }
 
 export const GLOBALS = new InjectionToken<Global>('GLOBALS');

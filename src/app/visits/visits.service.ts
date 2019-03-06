@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 import { Visit } from './visit.model';
+import { PlanVisit } from './plan-visit.model';
 
 const BACKEND_URL = environment.apiUrl + '/visits/';
 
@@ -16,8 +17,8 @@ export class VisitsService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  getVisits(visitsPerPage: number, currentPage: number) {
-    const queryParams = `?pageSize=${visitsPerPage}&page=${currentPage}`;
+  getVisits(visitsPerPage?: number, currentPage?: number, startDate?: Date, endDate?: Date) {
+    const queryParams = `?pageSize=${visitsPerPage}&page=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
     this.http.get<{ message: string, visits: any, maxVisits: number }>(
       BACKEND_URL + queryParams
     )
@@ -39,13 +40,33 @@ export class VisitsService {
         };
       }))
       .subscribe((transformedVisitData) => {
-        // console.log(transformedVisitData);
         this.visits = transformedVisitData.visits;
         this.visitsUpdated.next({
           visits: [...this.visits],
           visitCount: transformedVisitData.maxVisits
         });
       });
+  }
+  downLoadVisits(visitsPerPage?: number, currentPage?: number, startDate?: Date, endDate?: Date) {
+    const queryParams = `?pageSize=${visitsPerPage}&page=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
+    return this.http.get<{ message: string, visits: any, maxVisits: number }>(
+      BACKEND_URL + '/download' + queryParams
+    )
+      .pipe(map((visitData) => {
+        return visitData.visits;
+      }));
+  }
+  getPlannedVisits(userId: string) {
+    const queryParams = `?userId=${userId}`;
+    return this.http.get<{ message: string, plannedVisits: any, maxVisits: number }>(
+      BACKEND_URL + '/planned' + queryParams
+    )
+      .pipe(map((visitData) => {
+        return {
+          plannedVisits: visitData.plannedVisits,
+          maxVisits: visitData.maxVisits
+        };
+      }));
   }
 
   getVisitsStatistics(period?: string): Observable<any> {
@@ -119,6 +140,10 @@ export class VisitsService {
       .subscribe((responseData) => {
         this.router.navigate(['/viewvisit']);
       });
+  }
+  addPlannedVisit(plannedVisit: PlanVisit) {
+    return this.http
+      .post<{ message: string, visitId: string }>(BACKEND_URL, plannedVisit);
   }
 
   /*updateVisit(id: string, customer: string, contact_no: string, remarks: string, date: Date,

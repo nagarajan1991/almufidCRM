@@ -1,4 +1,5 @@
 const Visit = require('../models/visit');
+const PlanVisit = require('../models/planvisit');
 
 exports.CreateVisit = (req, res, next) => {
   const visit = new Visit({
@@ -50,6 +51,9 @@ exports.getVisits = (req, res, next) => {
   const currentPage = +req.query.page;
   const searchValue = req.query.searchValue;
   const period = req.query.period;
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
+
   let postQuery=null;
 
   if(searchValue){
@@ -69,6 +73,8 @@ exports.getVisits = (req, res, next) => {
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
     postQuery = Visit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
+  }else if(startDate && endDate){
+    postQuery = Visit.find({"created_on": {"$gte": startDate, "$lt": endDate}});
   }
   else{
      postQuery = Visit.find();
@@ -100,6 +106,57 @@ exports.getVisits = (req, res, next) => {
 };
 
 
+exports.getPlanVisits = (req, res, next) => {
+  const userId = req.query.userId;
+  const period = req.query.period;
+  let postQuery=null;
+
+  if(userId){
+    postQuery = PlanVisit.find({customer: new RegExp(searchValue, 'i')});
+  }else if(period){ 
+    let date = new Date();
+    let firstDay=null;
+    let lastDay =null;
+    if(period=='Monthly'){
+      
+       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+    }
+    if(period=='Yearly'){
+      firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
+    }
+    postQuery = PlanVisit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
+  }
+  else{
+     postQuery = PlanVisit.find();
+  }
+  
+  let fetchedVisits;
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize)
+  }
+  
+  postQuery
+  .then(documents => {
+    fetchedVisits = documents;
+    return PlanVisit.count();
+  }).then(count => {
+      res.status(200).json({
+        message: "Visits fetched successfully",
+        planVisits: fetchedVisits,
+        maxVisits: count
+      });
+  })
+  .catch(error => {
+    res.status(500).json({
+      message: "Fetching Visits Failed!"
+    });
+  });
+};
 
 exports.getVisit = (req, res, next) => {
   Visit.findById(req.params.id).then(visit => {
