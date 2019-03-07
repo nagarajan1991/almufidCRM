@@ -45,6 +45,64 @@ exports.updateVisit = (req, res, next) => {
   });
 };
 
+exports.createPlanVisit = (req, res, next) => {
+  const visit = new PlanVisit({
+    userId: req.body.userId,
+    title: req.body.title,
+    start: req.body.start,
+    end: req.body.end,
+    pcolor: req.body.pcolor,
+    scolor: req.body.scolor,
+    draggable: req.body.draggable,
+    resizable: {
+      beforeStart: true,
+      afterEnd: true,
+    }
+  });
+  visit.save().then(createdVisit => {
+    res.status(201).json({
+      message: "Plan Vist added successfully",
+      visitId: createdVisit._id
+    });
+  })
+  .catch( error => {
+    res.status(500).json({
+      message: "Creating Plan Visit Failed!"
+    });
+  });
+};
+
+exports.updatePlanVisit = (req, res, next) => {
+  const visit = new PlanVisit({
+    _id: req.body.id,
+    userId: req.body.userId,
+    title: req.body.title,
+    start: req.body.start,
+    end: req.body.end,
+    pcolor: req.body.pcolor,
+    scolor: req.body.scolor,
+    draggable: req.body.draggable,
+    resizable: {
+      beforeStart: true,
+      afterEnd: true,
+    }
+  });
+  PlanVisit.updateOne({_id: req.params.id, creator: req.userData.userId}, visit).then(result => {
+    if(result.n > 0 ) {
+      res.status(200).json({ message: "Plan Visit Update Successfull!" });
+    } else {
+      res.status(401).json({ message: "Not Authorized!" });
+    }
+  })
+  .catch(error => {
+    res.status(500).json({
+      message: "Couldn't update the plan visit"
+    });
+  });
+};
+
+
+
 
 exports.getVisits = (req, res, next) => {
   const pageSize = +req.query.pageSize;

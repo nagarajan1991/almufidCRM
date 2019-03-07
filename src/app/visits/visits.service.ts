@@ -56,18 +56,6 @@ export class VisitsService {
         return visitData.visits;
       }));
   }
-  getPlannedVisits(userId: string) {
-    const queryParams = `?userId=${userId}`;
-    return this.http.get<{ message: string, plannedVisits: any, maxVisits: number }>(
-      BACKEND_URL + '/planned' + queryParams
-    )
-      .pipe(map((visitData) => {
-        return {
-          plannedVisits: visitData.plannedVisits,
-          maxVisits: visitData.maxVisits
-        };
-      }));
-  }
 
   getVisitsStatistics(period?: string): Observable<any> {
     const queryParams = `?period=${period}`;
@@ -141,7 +129,7 @@ export class VisitsService {
         this.router.navigate(['/viewvisit']);
       });
   }
-  addPlannedVisit(plannedVisit: PlanVisit[]) {
+  addPlannedVisit(plannedVisit: PlanVisit) {
     return this.http
       .post<{ message: string, visitId: string }>(BACKEND_URL, plannedVisit);
   }

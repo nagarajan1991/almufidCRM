@@ -5,13 +5,14 @@ const planVisitSchema = mongoose.Schema({
   title: { type:String, required:true},
   start: { type:Date, default:Date.now},
   end: { type:Date, default:Date.now},
-  color: {type:String, required:true},
+  pcolor: {type:String, required:true},
+  scolor: {type:String, required:true},
   draggable: {type:Boolean, required:true},
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  resizable: {
+ /*  resizable: {
     beforeStart: {type:String, required:true},
     afterEnd: {type:String, required:true},
-  },
+  }, */
 });
 
 module.exports = mongoose.model('PlanVisit', planVisitSchema);

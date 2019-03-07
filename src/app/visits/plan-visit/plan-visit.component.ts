@@ -2,7 +2,8 @@ import {
   Component,
   ChangeDetectionStrategy,
   ViewChild,
-  TemplateRef
+  TemplateRef,
+  OnInit
 } from '@angular/core';
 import {
   startOfDay,
@@ -26,6 +27,7 @@ import { VisitsService } from '../visits.service';
 import { PlanVisit } from '../plan-visit.model';
 import { Inject } from '@angular/core';
 import { GLOBALS, Global } from '../global';
+import { PlanVisitService } from '../planvisit.service';
 
 const colors: any = {
   red: {
@@ -49,7 +51,9 @@ const colors: any = {
   styleUrls: ['./plan-visit.component.css']
 })
 
-export class PlanVisitComponent {
+export class PlanVisitComponent implements OnInit {
+  isLoading: boolean;
+
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -82,7 +86,7 @@ export class PlanVisitComponent {
   refresh: Subject<any> = new Subject();
 
   events: CalendarEvent[] = [
-    {
+    /* {
       start: subDays(startOfDay(new Date()), 1),
       end: addDays(new Date(), 1),
       title: 'A 3 day event',
@@ -119,14 +123,47 @@ export class PlanVisitComponent {
         afterEnd: true
       },
       draggable: true
-    }
+    } */
   ];
 
   activeDayIsOpen = true;
+  totalVisits: number;
+  planVisits: any;
+  visitsSubb: any;
 
   constructor(private modal: NgbModal,
     @Inject(GLOBALS) public g: Global,
-    private visitService: VisitsService) { }
+    private planVisitService: PlanVisitService) {
+    this.planVisitService.getPlanVisitsByUser(this.g.user.userId);
+    this.visitsSubb = this.planVisitService
+      .getPlanVisitUpdateListener()
+      .subscribe((visitData: { planVisits: PlanVisit[], visitCount: number }) => {
+        this.isLoading = false;
+        this.totalVisits = visitData.visitCount;
+        this.planVisits = visitData.planVisits;
+        this.events = this.planVisits.map(item => {
+          return {
+            title: item.title,
+            start: item.start,
+            end: item.end,
+            color: { primary: item.pcolor, secondary: item.scolor },
+            draggable: item.draggable,
+            resizable: item.resizable,
+            allDay: true
+          };
+        });
+        this.events=this.events.map(item => {
+          item.actions = this.actions
+          return item;
+        });
+        this.refresh.next();
+      });
+  }
+
+
+  ngOnInit(): void {
+    this.isLoading = true;
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -172,20 +209,19 @@ export class PlanVisitComponent {
     });
     this.refresh.next();
   }
-  updateVisitPlans() {
-    const plannedVisits: PlanVisit[] = this.events.map(item => {
-      return {
-        title: item.title,
-        userId: this.g.user.userId,
-        start: item.start,
-        end: item.end,
-        color: item.color.toString(),
-        draggable: item.draggable,
-        resizable: item.resizable,
-        creator: this.g.user.userId
-      };
-    });
-    this.visitService.addPlannedVisit(plannedVisits);
+  deleteEvent() {
+
+  }
+  upSertVisitPlan(event: any) {
+    event.userId = this.g.user.userId;
+    event.creator = this.g.user.userId;
+    event.pcolor = event.color.primary;
+    event.scolor = event.color.secondary;
+    if (event.id) {
+      this.planVisitService.updatePlanVisit(event.id, event);
+    } else {
+      this.planVisitService.addPlanVisit(event);
+    }
   }
 }
 
