@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { VisitsService } from '../visits/visits.service';
 import { Inject } from '@angular/core';
 import { GLOBALS, Global } from '../visits/global';
+import { User } from '../auth/user.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +16,7 @@ import { GLOBALS, Global } from '../visits/global';
 
 export class DashBoardComponent implements OnInit {
 
+  selectedUser:User;
   users$: Observable<any>;
   visitsMonthly$: Observable<any>;
   visitsYearly$: Observable<any>;
@@ -29,4 +31,8 @@ export class DashBoardComponent implements OnInit {
     this.visitsYearly$ = this.visitService.getVisitsStatistics('Yearly');
   }
 
+  selectUser(user:User){
+    this.selectedUser=user;
+    return false;
+  }
 }

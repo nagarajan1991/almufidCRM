@@ -16,6 +16,7 @@ import { VisitsModule } from './visits/visits.module';
 import { DashBoardComponent } from './dashboard/dashboard.component';
 import { AgmCoreModule } from '@agm/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { GLOBALS, Global } from './visits/global';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     })
   ],
   providers: [Title,
+    { provide: GLOBALS, useClass: Global, multi: false },
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
   ],

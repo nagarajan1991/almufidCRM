@@ -29,14 +29,37 @@
       </div>
     </div>
   </div>
-  <div *ngIf="g.userrolevalue==='Sales manager'" class="row">
-    <h4>View User Details</h4>
-    <mat-form-field>
-      <mat-select placeholder="Users">
-        <mat-option *ngFor="let user of (users$ |async)?.users" [value]="user.fullname">
-          {{user.fullname}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div *ngIf="g.user.userrolevalue==='SalesManager'" class="mt-5 row">
+    <div class="col-xs-12 col-sm-4 col-md-4">
+      <mat-form-field>
+        <mat-select (selectionChange)="selectUser($event.value)" placeholder="Select Users">
+          <mat-option *ngFor="let user of (users$ |async)?.users" [value]="user">
+            {{user.fullname}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xs-12 col-sm-4 col-md-4">
+      <div class="well well-sm">
+        <div class="row">
+          <!-- <div class="col-sm-6 col-md-4">
+            <img src="http://placehold.it/380x500" alt="" class="img-rounded img-responsive" />
+          </div> -->
+          <div class="col-sm-6 col-md-8">
+            <h4>
+              {{selectedUser?.fullname}}
+            </h4>
+            <p>
+              <i class="glyphicon glyphicon-envelope"></i>{{selectedUser?.email}}
+              <br />
+              <i class="glyphicon glyphicon-gift"></i>{{selectedUser?.userrolevalue}}
+              <br />
+              <i class="glyphicon glyphicon-gift"></i>{{selectedUser?.mobile}}
+            </p>
+            <!-- Split button -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
