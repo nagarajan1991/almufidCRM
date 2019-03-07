@@ -1,5 +1,5 @@
 export class PlanVisit {
-    id: string;
+    id?: string;
     userId: string;
     title: string;
     start: Date;

@@ -141,7 +141,7 @@ export class VisitsService {
         this.router.navigate(['/viewvisit']);
       });
   }
-  addPlannedVisit(plannedVisit: PlanVisit) {
+  addPlannedVisit(plannedVisit: PlanVisit[]) {
     return this.http
       .post<{ message: string, visitId: string }>(BACKEND_URL, plannedVisit);
   }

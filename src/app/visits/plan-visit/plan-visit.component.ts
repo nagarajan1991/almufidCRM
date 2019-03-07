@@ -22,6 +22,10 @@ import {
   CalendarEventTimesChangedEvent,
   CalendarView
 } from 'angular-calendar';
+import { VisitsService } from '../visits.service';
+import { PlanVisit } from '../plan-visit.model';
+import { Inject } from '@angular/core';
+import { GLOBALS, Global } from '../global';
 
 const colors: any = {
   red: {
@@ -42,7 +46,7 @@ const colors: any = {
   selector: 'app-plan-visit',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './plan-visit.component.html',
-  styleUrls : ['./plan-visit.component.css']
+  styleUrls: ['./plan-visit.component.css']
 })
 
 export class PlanVisitComponent {
@@ -118,9 +122,11 @@ export class PlanVisitComponent {
     }
   ];
 
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen = true;
 
-  constructor(private modal: NgbModal) {}
+  constructor(private modal: NgbModal,
+    @Inject(GLOBALS) public g: Global,
+    private visitService: VisitsService) { }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -162,8 +168,25 @@ export class PlanVisitComponent {
       resizable: {
         beforeStart: true,
         afterEnd: true
-      }
+      },
     });
     this.refresh.next();
   }
+  updateVisitPlans() {
+    const plannedVisits: PlanVisit[] = this.events.map(item => {
+      return {
+        title: item.title,
+        userId: this.g.user.userId,
+        start: item.start,
+        end: item.end,
+        color: item.color.toString(),
+        draggable: item.draggable,
+        resizable: item.resizable,
+        creator: this.g.user.userId
+      };
+    });
+    this.visitService.addPlannedVisit(plannedVisits);
+  }
 }
+
+
