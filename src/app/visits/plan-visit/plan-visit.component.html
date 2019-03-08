@@ -1,3 +1,15 @@
+<div *ngIf="g.user.userrolevalue==='SalesManager'" class="mt-5 row">
+  <div class="col-xs-12 col-sm-4 col-md-4">
+    <mat-form-field>
+      <mat-select (selectionChange)="refreshList($event.value)" placeholder="Select Users">
+        <mat-option *ngFor="let user of (users$ |async)?.users" [value]="user">
+          {{user.fullname}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
 <ng-template #modalContent let-close="close">
   <div class="modal-header">
     <h5 class="modal-title">Event action occurred</h5>

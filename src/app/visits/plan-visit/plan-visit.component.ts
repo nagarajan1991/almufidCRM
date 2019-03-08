@@ -15,7 +15,7 @@ import {
   isSameMonth,
   addHours
 } from 'date-fns';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CalendarEvent,
@@ -28,6 +28,8 @@ import { PlanVisit } from '../plan-visit.model';
 import { Inject } from '@angular/core';
 import { GLOBALS, Global } from '../global';
 import { PlanVisitService } from '../planvisit.service';
+import { AuthService } from '../../auth/auth.service';
+import { User } from '../../auth/user.model';
 
 const colors: any = {
   red: {
@@ -130,8 +132,10 @@ export class PlanVisitComponent implements OnInit {
   totalVisits: number;
   planVisits: any;
   visitsSubb: any;
+  users$: Observable<any>;
 
   constructor(private modal: NgbModal,
+    private authService: AuthService,
     @Inject(GLOBALS) public g: Global,
     private planVisitService: PlanVisitService) {
     this.planVisitService.getPlanVisitsByUser(this.g.user.userId);
@@ -152,7 +156,7 @@ export class PlanVisitComponent implements OnInit {
             allDay: true
           };
         });
-        this.events=this.events.map(item => {
+        this.events = this.events.map(item => {
           item.actions = this.actions
           return item;
         });
@@ -160,8 +164,35 @@ export class PlanVisitComponent implements OnInit {
       });
   }
 
+  refreshList(user: User) {
+    this.planVisitService.getPlanVisitsByUser(user.userId);
+    this.visitsSubb = this.planVisitService
+      .getPlanVisitUpdateListener()
+      .subscribe((visitData: { planVisits: PlanVisit[], visitCount: number }) => {
+        this.isLoading = false;
+        this.totalVisits = visitData.visitCount;
+        this.planVisits = visitData.planVisits;
+        this.events = this.planVisits.map(item => {
+          return {
+            title: item.title,
+            start: item.start,
+            end: item.end,
+            color: { primary: item.pcolor, secondary: item.scolor },
+            draggable: item.draggable,
+            resizable: item.resizable,
+            allDay: true
+          };
+        });
+        this.events = this.events.map(item => {
+          item.actions = this.actions
+          return item;
+        });
+        this.refresh.next();
+      });
+  }
 
   ngOnInit(): void {
+    this.users$ = this.authService.getUsers();
     this.isLoading = true;
   }
 
@@ -209,8 +240,8 @@ export class PlanVisitComponent implements OnInit {
     });
     this.refresh.next();
   }
-  deleteEvent() {
-
+  deleteEvent(event) {
+    this.planVisitService.deletePlanVisit(event.id);
   }
   upSertVisitPlan(event: any) {
     event.userId = this.g.user.userId;

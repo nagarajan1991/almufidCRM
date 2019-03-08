@@ -163,7 +163,8 @@ export class AuthService {
               fullname: user.fullname,
               email: user.email,
               userrolevalue: user.userrolevalue,
-              mobile: user.mobile
+              mobile: user.mobile,
+              userId: user._id
             };
           }),
           userCount: userData.maxUsers

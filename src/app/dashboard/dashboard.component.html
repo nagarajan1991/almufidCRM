@@ -16,7 +16,7 @@
     <div class="col-md-4">
       <div class="card-counter danger">
         <i class="fa fa-ticket"></i>
-        <span class="count-numbers">599/{{(visitsMonthly$ | async)?.visitCount}}</span>
+        <span class="count-numbers">{{(planvisitsMonthly$ | async)?.visitCount}}/{{(visitsMonthly$ | async)?.visitCount}}</span>
         <span class="count-name">Projected/Actual Monthly Visits</span>
       </div>
     </div>
@@ -24,7 +24,7 @@
     <div class="col-md-4">
       <div class="card-counter success">
         <i class="fa fa-database"></i>
-        <span class="count-numbers">6875/{{(visitsYearly$ | async)?.visitCount}}</span>
+        <span class="count-numbers">{{(planVisitsYearly$ | async)?.visitCount}}/{{(visitsYearly$ | async)?.visitCount}}</span>
         <span class="count-name">Projected/Actual Yearly Visits</span>
       </div>
     </div>
