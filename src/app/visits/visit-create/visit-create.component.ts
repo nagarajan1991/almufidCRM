@@ -101,7 +101,7 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
     }
     this.isLoading = true;
     if (this.mode === 'create') {
-      this.visitsService.addVisit(form.value.customer, form.value.contact_no, form.value.remarks, null,
+      this.visitsService.addVisit(this.customer.value, form.value.contact_no, form.value.remarks, null,
         this.lat, this.lng, form.value.creator);
     } else {
       /* this.visitsService.updateVisit(this.visitId, form.value.customer, form.value.contact_no, form.value.remarks,

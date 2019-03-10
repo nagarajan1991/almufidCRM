@@ -1,13 +1,14 @@
 const Visit = require('../models/visit');
 const PlanVisit = require('../models/planvisit');
 
+
 exports.CreateVisit = (req, res, next) => {
   const visit = new Visit({
     customer: req.body.customer,
     contact_no: req.body.contact_no,
     remarks: req.body.remarks,
-    lat: req.body.lat,
-    lng: req.body.lng,
+    lat: req.body.lat ? req.body.lat : '0',
+    lng: req.body.lng ? req.body.lng : '0',
     creator: req.userData.userId
   });
   visit.save().then(createdVisit => {
@@ -16,11 +17,12 @@ exports.CreateVisit = (req, res, next) => {
       visitId: createdVisit._id
     });
   })
-  .catch( error => {
-    res.status(500).json({
-      message: "Creating Visit Failed!"
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        message: "Creating Visit Failed!"
+      });
     });
-  });
 };
 
 exports.updateVisit = (req, res, next) => {
@@ -31,18 +33,18 @@ exports.updateVisit = (req, res, next) => {
     remarks: req.body.remarks,
     creator: req.userData.userId
   });
-  Visit.updateOne({_id: req.params.id, creator: req.userData.userId}, visit).then(result => {
-    if(result.n > 0 ) {
+  Visit.updateOne({ _id: req.params.id, creator: req.userData.userId }, visit).then(result => {
+    if (result.n > 0) {
       res.status(200).json({ message: "Update Successfull!" });
     } else {
       res.status(401).json({ message: "Not Authorized!" });
     }
   })
-  .catch(error => {
-    res.status(500).json({
-      message: "Couldn't update the post"
+    .catch(error => {
+      res.status(500).json({
+        message: "Couldn't update the post"
+      });
     });
-  });
 };
 
 exports.createPlanVisit = (req, res, next) => {
@@ -65,11 +67,11 @@ exports.createPlanVisit = (req, res, next) => {
       visitId: createdVisit._id
     });
   })
-  .catch( error => {
-    res.status(500).json({
-      message: "Creating Plan Visit Failed!"
+    .catch(error => {
+      res.status(500).json({
+        message: "Creating Plan Visit Failed!"
+      });
     });
-  });
 };
 
 exports.updatePlanVisit = (req, res, next) => {
@@ -87,18 +89,18 @@ exports.updatePlanVisit = (req, res, next) => {
       afterEnd: true,
     }
   });
-  PlanVisit.updateOne({_id: req.params.id, creator: req.userData.userId}, visit).then(result => {
-    if(result.n > 0 ) {
+  PlanVisit.updateOne({ _id: req.params.id, creator: req.userData.userId }, visit).then(result => {
+    if (result.n > 0) {
       res.status(200).json({ message: "Plan Visit Update Successfull!" });
     } else {
       res.status(401).json({ message: "Not Authorized!" });
     }
   })
-  .catch(error => {
-    res.status(500).json({
-      message: "Couldn't update the plan visit"
+    .catch(error => {
+      res.status(500).json({
+        message: "Couldn't update the plan visit"
+      });
     });
-  });
 };
 
 
@@ -112,108 +114,109 @@ exports.getVisits = (req, res, next) => {
   const startDate = req.query.startDate;
   const endDate = req.query.endDate;
 
-  let postQuery=null;
+  let postQuery = null;
 
-  if(searchValue){
-    postQuery = Visit.find({customer: new RegExp(searchValue, 'i')});
-  }else if(period){ 
+  if (searchValue) {
+    postQuery = Visit.find({ customer: new RegExp(searchValue, 'i') });
+  } else if (period) {
     let date = new Date();
-    let firstDay=null;
-    let lastDay =null;
-    if(period=='Monthly'){
-      
-       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      
+    let firstDay = null;
+    let lastDay = null;
+    if (period == 'Monthly') {
+
+      firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
     }
-    if(period=='Yearly'){
+    if (period == 'Yearly') {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    postQuery = Visit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
-  }else if(startDate && endDate){
-    postQuery = Visit.find({"created_on": {"$gte": startDate, "$lt": endDate}});
+    postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
+  } else if (startDate != 'undefined' && endDate != 'undefined') {
+    postQuery = Visit.find({ "created_on": { "$gte": startDate, "$lt": endDate } });
   }
-  else{
-     postQuery = Visit.find();
+  else {
+    postQuery = Visit.find();
   }
-  
+
   let fetchedVisits;
   if (pageSize && currentPage) {
     postQuery
       .skip(pageSize * (currentPage - 1))
       .limit(pageSize)
   }
-  
+
   postQuery
-  .then(documents => {
-    fetchedVisits = documents;
-    return Visit.count();
-  }).then(count => {
+    .then(documents => {
+      fetchedVisits = documents;
+      return Visit.count();
+    }).then(count => {
       res.status(200).json({
         message: "Visits fetched successfully",
         visits: fetchedVisits,
         maxVisits: count
       });
-  })
-  .catch(error => {
-    res.status(500).json({
-      message: "Fetching Visits Failed!"
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        message: "Fetching Visits Failed!"
+      });
     });
-  });
 };
 
 
 exports.getPlanVisits = (req, res, next) => {
   const userId = req.query.userId;
   const period = req.query.period;
-  let postQuery=null;
+  let postQuery = null;
 
-  if(userId){
-    postQuery = PlanVisit.find({customer: new RegExp(searchValue, 'i')});
-  }else if(period){ 
+  if (userId) {
+    postQuery = PlanVisit.find({ customer: new RegExp(searchValue, 'i') });
+  } else if (period) {
     let date = new Date();
-    let firstDay=null;
-    let lastDay =null;
-    if(period=='Monthly'){
-      
-       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      
+    let firstDay = null;
+    let lastDay = null;
+    if (period == 'Monthly') {
+
+      firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
     }
-    if(period=='Yearly'){
+    if (period == 'Yearly') {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    postQuery = PlanVisit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
+    postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
   }
-  else{
-     postQuery = PlanVisit.find();
+  else {
+    postQuery = PlanVisit.find();
   }
-  
+
   let fetchedVisits;
   if (pageSize && currentPage) {
     postQuery
       .skip(pageSize * (currentPage - 1))
       .limit(pageSize)
   }
-  
+
   postQuery
-  .then(documents => {
-    fetchedVisits = documents;
-    return PlanVisit.count();
-  }).then(count => {
+    .then(documents => {
+      fetchedVisits = documents;
+      return PlanVisit.count();
+    }).then(count => {
       res.status(200).json({
         message: "Visits fetched successfully",
         planVisits: fetchedVisits,
         maxVisits: count
       });
-  })
-  .catch(error => {
-    res.status(500).json({
-      message: "Fetching Visits Failed!"
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching Visits Failed!"
+      });
     });
-  });
 };
 
 exports.getVisit = (req, res, next) => {
@@ -221,20 +224,20 @@ exports.getVisit = (req, res, next) => {
     if (visit) {
       res.status(200).json(visit);
     } else {
-      res.status(404).json({message: 'Visit not found!'});
+      res.status(404).json({ message: 'Visit not found!' });
     }
   })
-  .catch(error => {
-    res.status(500).json({
-      message: "Fetching Visit Failed!"
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching Visit Failed!"
+      });
     });
-});
 };
 
 
 exports.deleteVisit = (req, res, next) => {
   Visit.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(result => {
-    if(result.n > 0 ) {
+    if (result.n > 0) {
       res.status(200).json({ message: "Deletion Successfull!" });
     } else {
       res.status(401).json({ message: "Not Authorized!" });
@@ -244,5 +247,5 @@ exports.deleteVisit = (req, res, next) => {
     res.status(500).json({
       message: "Fetching Visits Failed!"
     });
-});
+  });
 };

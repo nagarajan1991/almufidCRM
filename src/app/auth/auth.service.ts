@@ -73,7 +73,6 @@ export class AuthService {
           this.userrole = response.userrolevalue;
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-          console.log(expirationDate);
           this.saveAuthData(token, expirationDate, this.userId);
           this.g.user = Object.assign({}, response);
           localStorage.setItem('currentUser',JSON.stringify(this.g.user));

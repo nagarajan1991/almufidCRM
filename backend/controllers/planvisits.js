@@ -15,7 +15,6 @@ exports.CreatePlanVisit = (req, res, next) => {
     }, */
     creator: req.userData.userId
   });
-  console.log('planvisit'+planVisit);
   planVisit.save().then(createdPlanVisit => {
     res.status(201).json({
       message: "Vist added successfully",
@@ -70,8 +69,6 @@ exports.getPlanVisits = (req, res, next) => {
   const endDate = req.query.endDate;
   const userId = req.query.userId;
 
-  console.log('userid'+userId);
-
 
   let postQuery=null;
 
@@ -79,7 +76,6 @@ exports.getPlanVisits = (req, res, next) => {
     postQuery = PlanVisit.find({customer: new RegExp(searchValue, 'i')});
   }
   if(userId){
-    console.log('fetching for userid'+userId);
     postQuery = PlanVisit.find({userId: userId});
   }
   else if(period){ 
@@ -113,7 +109,6 @@ exports.getPlanVisits = (req, res, next) => {
   
   postQuery
   .then(documents => {
-    console.log(documents);
     fetchedPlanVisits = documents;
     return PlanVisit.count();
   }).then(count => {

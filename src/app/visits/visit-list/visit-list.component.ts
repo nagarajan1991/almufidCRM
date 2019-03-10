@@ -87,7 +87,9 @@ export class VisitListComponent implements OnInit, OnDestroy {
   }
   downloadVisits() {
     this.visitsService.downLoadVisits(null, null, this.fromDate, this.toDate).subscribe(visits => {
-      const wbout: ArrayBuffer = write(visits, { bookType: 'xlsx', type: 'array' });
+      const worksheet: WorkSheet = utils.json_to_sheet(visits);
+      const workbook: WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const wbout: ArrayBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
       this.createBlobAndDownload(wbout, 'VisitsDataExport.xlsx');
     });
   }

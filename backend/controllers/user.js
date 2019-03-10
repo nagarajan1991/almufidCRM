@@ -72,7 +72,6 @@ exports.userLogin = (req, res, next) => {
     if(searchValue){
       postQuery = User.find({customer: new RegExp(searchValue, 'i')});
     }else{
-      console.log('I am called');
        postQuery = User.find();
     }
     
@@ -81,7 +80,6 @@ exports.userLogin = (req, res, next) => {
     postQuery
     .then(documents => {
       fetchedUsers = documents;
-      console.log('users' +fetchedUsers)
       return User.count();
     }).then(count => {
         res.status(200).json({

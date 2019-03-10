@@ -11,7 +11,7 @@
   </mat-datepicker-toggle>
   <mat-datepicker #ToDatepicker></mat-datepicker>
 </mat-form-field>
-<a mat-raised-button color="primary" class="export-to-excel">Export to Excel</a>
+<a mat-raised-button color="primary" (click)="downloadVisits()" class="export-to-excel">Export to Excel</a>
 <mat-accordion multi="true" *ngIf="visits.length>0  && !isLoading" >
   <mat-expansion-panel *ngFor="let visit of visits.reverse()">
     <mat-expansion-panel-header
