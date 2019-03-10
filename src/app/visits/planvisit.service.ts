@@ -100,13 +100,18 @@ export class PlanVisitService {
       .pipe(map((visitData) => {
         return visitData.planVisits.map(visit => {
           return {
-            customer: visit.customer,
-            contact_no: visit.contact_no,
-            remarks: visit.remarks,
             id: visit._id,
-            date: visit.date,
-            lat: visit.lat,
-            lng: visit.lng,
+            userId: visit.userId,
+            title: visit.title,
+            start: visit.start,
+            end: visit.end,
+            pcolor: visit.pcolor,
+            scolor: visit.scolor,
+            draggable: visit.draggable,
+            resizable: {
+              beforeStart: true,
+              afterEnd: true,
+            },
             creator: visit.creator
           };
         });
@@ -121,6 +126,7 @@ export class PlanVisitService {
         return {
           planVisits: visitData.planVisits.map(visit => {
             return {
+              id: visit._id,
               userId: visit.userId,
               title: visit.title,
               start: visit.start,
@@ -183,6 +189,7 @@ export class PlanVisitService {
   }
 
   deletePlanVisit(id: string) {
-    return this.http.delete(BACKEND_URL + id);
+    return this.http.delete(BACKEND_URL + id).subscribe(response => {
+    });
   }
 }

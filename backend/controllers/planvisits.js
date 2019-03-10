@@ -109,7 +109,6 @@ exports.getPlanVisits = (req, res, next) => {
 
   postQuery
     .then(documents => {
-      console.log(documents);
       fetchedPlanVisits = documents;
       return PlanVisit.count();
     }).then(count => {
@@ -144,7 +143,7 @@ exports.getPlanVisit = (req, res, next) => {
 
 
 exports.deletePlanVisit = (req, res, next) => {
-  PlanVisit.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(result => {
+  PlanVisit.deleteOne({ _id: req.params.id }).then(result => {
     if (result.n > 0) {
       res.status(200).json({ message: "Deletion Successfull!" });
     } else {

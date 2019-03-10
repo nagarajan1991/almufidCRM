@@ -140,8 +140,8 @@ export class PlanVisitComponent implements OnInit {
         this.events = this.planVisits.map(item => {
           return {
             title: item.title,
-            start: item.start,
-            end: item.end,
+            start: startOfDay(item.start),
+            end: endOfDay(item.end),
             color: { primary: item.pcolor, secondary: item.scolor },
             draggable: item.draggable,
             resizable: item.resizable,
