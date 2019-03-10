@@ -116,9 +116,9 @@ exports.getVisits = (req, res, next) => {
 
   let postQuery = null;
 
-  if (searchValue) {
+  if (searchValue != 'undefined') {
     postQuery = Visit.find({ customer: new RegExp(searchValue, 'i') });
-  } else if (period) {
+  } else if (period != 'undefined') {
     let date = new Date();
     let firstDay = null;
     let lastDay = null;

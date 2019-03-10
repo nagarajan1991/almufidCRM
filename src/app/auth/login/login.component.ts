@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
     this.isLoading = true;
+    localStorage.clear();
     this.authService.login(form.value.fullname, form.value.email, form.value.password, form.value.userrolevalue, form.value.mobile);
   }
 

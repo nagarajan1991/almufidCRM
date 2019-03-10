@@ -54,7 +54,7 @@ const colors: any = {
 })
 
 export class PlanVisitComponent implements OnInit {
-  isLoading: boolean=true;
+  isLoading: boolean = true;
 
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
@@ -110,6 +110,7 @@ export class PlanVisitComponent implements OnInit {
         this.planVisits = visitData.planVisits;
         this.events = this.planVisits.map(item => {
           return {
+            id: item.id,
             title: item.title,
             start: startOfDay(new Date(item.start)),
             end: endOfDay(new Date(item.end)),
@@ -208,6 +209,7 @@ export class PlanVisitComponent implements OnInit {
     this.planVisitService.deletePlanVisit(event.id);
   }
   upSertVisitPlan(event: any) {
+
     event.userId = this.g.user.userId;
     event.creator = this.g.user.userId;
     event.pcolor = event.color.primary;

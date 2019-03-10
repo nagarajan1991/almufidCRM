@@ -9,10 +9,10 @@ exports.CreatePlanVisit = (req, res, next) => {
     pcolor: req.body.pcolor,
     scolor: req.body.scolor,
     draggable: req.body.draggable,
-   /*  resizable: {
-      beforeStart: true,
-      afterEnd: true,
-    }, */
+    /*  resizable: {
+       beforeStart: true,
+       afterEnd: true,
+     }, */
     creator: req.userData.userId
   });
   planVisit.save().then(createdPlanVisit => {
@@ -21,12 +21,12 @@ exports.CreatePlanVisit = (req, res, next) => {
       planVisitId: createdPlanVisit._id
     });
   })
-  .catch( error => {
-    console.log(error);
-    res.status(500).json({
-      message: "Creating PlanVisit Failed!"
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({
+        message: "Creating PlanVisit Failed!"
+      });
     });
-  });
 };
 
 exports.updatePlanVisit = (req, res, next) => {
@@ -45,18 +45,18 @@ exports.updatePlanVisit = (req, res, next) => {
     },
     creator: req.userData.userId
   });
-  PlanVisit.updateOne({_id: req.params.id, creator: req.userData.userId}, planVisit).then(result => {
-    if(result.n > 0 ) {
+  PlanVisit.updateOne({ _id: req.params.id, creator: req.userData.userId }, planVisit).then(result => {
+    if (result.n > 0) {
       res.status(200).json({ message: "Update Successfull!" });
     } else {
       res.status(401).json({ message: "Not Authorized!" });
     }
   })
-  .catch(error => {
-    res.status(500).json({
-      message: "Couldn't update the post"
+    .catch(error => {
+      res.status(500).json({
+        message: "Couldn't update the post"
+      });
     });
-  });
 };
 
 
@@ -70,59 +70,60 @@ exports.getPlanVisits = (req, res, next) => {
   const userId = req.query.userId;
 
 
-  let postQuery=null;
+  let postQuery = null;
 
-  if(searchValue){
-    postQuery = PlanVisit.find({customer: new RegExp(searchValue, 'i')});
+  if (searchValue) {
+    postQuery = PlanVisit.find({ customer: new RegExp(searchValue, 'i') });
   }
-  if(userId){
-    postQuery = PlanVisit.find({userId: userId});
+  if (userId) {
+    postQuery = PlanVisit.find({ userId: userId });
   }
-  else if(period){ 
+  else if (period != 'undefined') {
     let date = new Date();
-    let firstDay=null;
-    let lastDay =null;
-    if(period=='Monthly'){
-      
-       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      
+    let firstDay = null;
+    let lastDay = null;
+    if (period == 'Monthly') {
+
+      firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
     }
-    if(period=='Yearly'){
+    if (period == 'Yearly') {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    postQuery = PlanVisit.find({"created_on": {"$gte": firstDay, "$lt": lastDay}});
-  }else if(startDate && endDate){
-    postQuery = PlanVisit.find({"created_on": {"$gte": startDate, "$lt": endDate}});
+    postQuery = PlanVisit.find({ "end": { "$gte": firstDay, "$lt": lastDay } });
+  } else if (startDate != 'undefined' && endDate != 'undefined') {
+    postQuery = PlanVisit.find({ "end": { "$gte": startDate, "$lt": endDate } });
   }
-  else{
-     postQuery = PlanVisit.find();
+  else {
+    postQuery = PlanVisit.find();
   }
-  
+
   let fetchedPlanVisits;
   if (pageSize && currentPage) {
     postQuery
       .skip(pageSize * (currentPage - 1))
       .limit(pageSize)
   }
-  
+
   postQuery
-  .then(documents => {
-    fetchedPlanVisits = documents;
-    return PlanVisit.count();
-  }).then(count => {
+    .then(documents => {
+      console.log(documents);
+      fetchedPlanVisits = documents;
+      return PlanVisit.count();
+    }).then(count => {
       res.status(200).json({
         message: "PlanVisits fetched successfully",
         planVisits: fetchedPlanVisits,
         maxPlanVisits: count
       });
-  })
-  .catch(error => {
-    res.status(500).json({
-      message: "Fetching PlanVisits Failed!"
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching PlanVisits Failed!"
+      });
     });
-  });
 };
 
 
@@ -131,20 +132,20 @@ exports.getPlanVisit = (req, res, next) => {
     if (planVisit) {
       res.status(200).json(planVisit);
     } else {
-      res.status(404).json({message: 'PlanVisit not found!'});
+      res.status(404).json({ message: 'PlanVisit not found!' });
     }
   })
-  .catch(error => {
-    res.status(500).json({
-      message: "Fetching PlanVisit Failed!"
+    .catch(error => {
+      res.status(500).json({
+        message: "Fetching PlanVisit Failed!"
+      });
     });
-});
 };
 
 
 exports.deletePlanVisit = (req, res, next) => {
   PlanVisit.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then(result => {
-    if(result.n > 0 ) {
+    if (result.n > 0) {
       res.status(200).json({ message: "Deletion Successfull!" });
     } else {
       res.status(401).json({ message: "Not Authorized!" });
@@ -154,5 +155,5 @@ exports.deletePlanVisit = (req, res, next) => {
     res.status(500).json({
       message: "Fetching PlanVisits Failed!"
     });
-});
+  });
 };
