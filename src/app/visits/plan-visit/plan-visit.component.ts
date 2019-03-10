@@ -54,7 +54,7 @@ const colors: any = {
 })
 
 export class PlanVisitComponent implements OnInit {
-  isLoading: boolean;
+  isLoading: boolean=true;
 
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
@@ -87,58 +87,21 @@ export class PlanVisitComponent implements OnInit {
 
   refresh: Subject<any> = new Subject();
 
-  events: CalendarEvent[] = [
-    /* {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: colors.red,
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-      draggable: true
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: colors.yellow,
-      actions: this.actions
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: colors.blue,
-      allDay: true
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: new Date(),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-      draggable: true
-    } */
-  ];
+  events: CalendarEvent[] = [];
 
   activeDayIsOpen = true;
   totalVisits: number;
   planVisits: any;
   visitsSubb: any;
   users$: Observable<any>;
+  selectedUser: string;
 
   constructor(private modal: NgbModal,
     private authService: AuthService,
     @Inject(GLOBALS) public g: Global,
     private planVisitService: PlanVisitService) {
     this.planVisitService.getPlanVisitsByUser(this.g.user.userId);
+    this.selectedUser = this.g.user.userId;
     this.visitsSubb = this.planVisitService
       .getPlanVisitUpdateListener()
       .subscribe((visitData: { planVisits: PlanVisit[], visitCount: number }) => {
@@ -148,8 +111,8 @@ export class PlanVisitComponent implements OnInit {
         this.events = this.planVisits.map(item => {
           return {
             title: item.title,
-            start: item.start,
-            end: item.end,
+            start: startOfDay(new Date(item.start)),
+            end: endOfDay(new Date(item.end)),
             color: { primary: item.pcolor, secondary: item.scolor },
             draggable: item.draggable,
             resizable: item.resizable,
@@ -165,6 +128,7 @@ export class PlanVisitComponent implements OnInit {
   }
 
   refreshList(user: User) {
+    this.selectedUser = user.userId;
     this.planVisitService.getPlanVisitsByUser(user.userId);
     this.visitsSubb = this.planVisitService
       .getPlanVisitUpdateListener()
