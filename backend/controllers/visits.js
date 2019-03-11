@@ -142,13 +142,14 @@ exports.getVisits = (req, res, next) => {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    if (userId != 'undefined') {
+    /* if (userId != 'undefined') {
       console.log('I am called 2');
       postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
     }else{
       console.log('I am called 3');
       postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
-    }
+    } */
+    postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
   } else if (startDate != 'undefined' && endDate != 'undefined') {
     postQuery = Visit.find({ "created_on": { "$gte": startDate, "$lt": endDate } });
   }
