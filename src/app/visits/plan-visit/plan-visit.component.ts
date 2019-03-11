@@ -212,6 +212,7 @@ export class PlanVisitComponent implements OnInit {
 
     event.userId = this.g.user.userId;
     event.creator = this.g.user.userId;
+    event.creator_name = this.g.user.email;
     event.pcolor = event.color.primary;
     event.scolor = event.color.secondary;
     if (event.id) {

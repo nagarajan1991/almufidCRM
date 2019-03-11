@@ -17,33 +17,48 @@ import { User } from '../auth/user.model';
 
 export class DashBoardComponent implements OnInit {
 
-  selectedUser:User;
+  selectedUser: User;
   users$: Observable<any>;
   visits$: Observable<any>;
   visitsYearly$: Observable<any>;
   planvisits$: Observable<any>;
   planVisitsYearly$: Observable<any>;
-  selectedPeriod:string='Daily';
+  selectedPeriod: string = 'Daily';
   constructor(private authService: AuthService,
-  @Inject(GLOBALS) public g: Global,
-  private visitService: VisitsService,
-  private planVisitService: PlanVisitService) {
+    @Inject(GLOBALS) public g: Global,
+    private visitService: VisitsService,
+    private planVisitService: PlanVisitService) {
 
   }
   ngOnInit(): void {
     this.users$ = this.authService.getUsers();
-    this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod);
-    this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod);
+    if (this.g.user.userrolevalue === 'SalesMan') {
+      this.selectedUser = this.g.user;
+    }
+    if (this.selectedUser) {
+      this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);
+      this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);
+    } else {
+      this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod);
+      this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod);
+    }
+
   }
 
-  refreshStat(period:string){
+  refreshStat(period: string) {
     this.selectedPeriod = period;
-    this.visits$ = this.visitService.getVisitsStatistics(period);
-    this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(period);
+    if (this.selectedUser) {
+      this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);
+      this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);
+    } else {
+      this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod);
+      this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod);
+    }
   }
 
-  selectUser(user:User){
-    this.selectedUser=user;
+  selectUser(user: User) {
+    this.selectedUser = user;
+    this.refreshStat(this.selectedPeriod);
     return false;
   }
 }

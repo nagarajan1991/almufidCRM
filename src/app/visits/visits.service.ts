@@ -1,3 +1,6 @@
+
+import { GLOBALS, Global } from '../visits/global';
+import { Inject } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
@@ -15,7 +18,9 @@ export class VisitsService {
   private visits: Visit[] = [];
   private visitsUpdated = new Subject<{ visits: Visit[], visitCount: number }>();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient,
+    @Inject(GLOBALS) public g: Global,
+    private router: Router) { }
 
   getVisits(visitsPerPage?: number, currentPage?: number, startDate?: Date, endDate?: Date) {
     const queryParams = `?pageSize=${visitsPerPage}&page=${currentPage}&startDate=${startDate}&endDate=${endDate}`;
@@ -57,8 +62,8 @@ export class VisitsService {
       }));
   }
 
-  getVisitsStatistics(period?: string): Observable<any> {
-    const queryParams = `?period=${period}`;
+  getVisitsStatistics(period?: string, userId?: string): Observable<any> {
+    const queryParams = `?period=${period}&userId=${userId}`;
     return this.http.get<{ message: string, visits: any, maxVisits: number }>(
       BACKEND_URL + queryParams
     )
@@ -121,7 +126,7 @@ export class VisitsService {
   addVisit(customer: string, contact_no: string, remarks: string, date: Date, lat: string, lng: string, creator: string) {
     const visit: Visit = {
       id: null, customer: customer, contact_no: contact_no, remarks: remarks, date: null,
-      lat: lat, lng: lng, creator: creator
+      lat: lat, lng: lng, creator: creator, creator_name: this.g.user.email
     };
     this.http
       .post<{ message: string, visitId: string }>(BACKEND_URL, visit)
@@ -134,17 +139,19 @@ export class VisitsService {
       .post<{ message: string, visitId: string }>(BACKEND_URL, plannedVisit);
   }
 
-  /*updateVisit(id: string, customer: string, contact_no: string, remarks: string, date: Date,
+  updateVisit(id: string, customer: string, contact_no: string, remarks: string, date: Date,
     lat: string, lng: string, creator: string) {
-    const visit: Visit = {id: id, customer: customer, contact_no: contact_no, remarks: remarks, date: null,
-      lat: lat, lng: lng, creator: null};
+    const visit: Visit = {
+      id: id, customer: customer, contact_no: contact_no, remarks: remarks, date: null,
+      lat: lat, lng: lng, creator: creator, creator_name: this.g.user.email
+    };
     this.http.put(BACKEND_URL + id, visit)
-    .subscribe(response => {
-      this.router.navigate(['/viewvisit']);
-    });
+      .subscribe(response => {
+        this.router.navigate(['/viewvisit']);
+      });
   }
 
   deleteVisit(visitId: string) {
     return this.http.delete(BACKEND_URL + visitId);
-  }*/
+  }
 }

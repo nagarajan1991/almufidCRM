@@ -1,4 +1,5 @@
 const PlanVisit = require('../models/planvisit');
+var mongoose = require('mongoose');
 
 exports.CreatePlanVisit = (req, res, next) => {
   const planVisit = new PlanVisit({
@@ -75,10 +76,8 @@ exports.getPlanVisits = (req, res, next) => {
   if (searchValue) {
     postQuery = PlanVisit.find({ customer: new RegExp(searchValue, 'i') });
   }
-  if (userId) {
-    postQuery = PlanVisit.find({ userId: userId });
-  }
-  else if (period != 'undefined') {
+
+   if (period != 'undefined') {
     let date = new Date();
     let firstDay = null;
     let lastDay = null;
@@ -98,7 +97,13 @@ exports.getPlanVisits = (req, res, next) => {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    postQuery = PlanVisit.find({ "end": { "$gte": firstDay, "$lt": lastDay } });
+    if (userId != 'undefined') {
+      postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
+    }else{
+      postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
+    }
+  } else if (period == 'undefined' && userId != 'undefined') {
+    postQuery = PlanVisit.find({ userId: userId });
   } else if (startDate != 'undefined' && endDate != 'undefined') {
     postQuery = PlanVisit.find({ "end": { "$gte": startDate, "$lt": endDate } });
   }

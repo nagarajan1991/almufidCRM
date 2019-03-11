@@ -7,7 +7,8 @@ const visitSchema = mongoose.Schema({
   date: { type:Date, default:Date.now},
   lat: {type:String, required:true},
   lng: {type:String, required:true},
-  creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  creator_name: {type:String, required:true}
 });
 
 

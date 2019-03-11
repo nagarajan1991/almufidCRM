@@ -1,5 +1,6 @@
 const Visit = require('../models/visit');
 const PlanVisit = require('../models/planvisit');
+var mongoose = require('mongoose');
 
 
 exports.CreateVisit = (req, res, next) => {
@@ -9,7 +10,8 @@ exports.CreateVisit = (req, res, next) => {
     remarks: req.body.remarks,
     lat: req.body.lat ? req.body.lat : '0',
     lng: req.body.lng ? req.body.lng : '0',
-    creator: req.userData.userId
+    creator: req.userData.userId,
+    creator_name: req.body.creator_name
   });
   visit.save().then(createdVisit => {
     res.status(201).json({
@@ -31,7 +33,8 @@ exports.updateVisit = (req, res, next) => {
     customer: req.body.customer,
     contact_no: req.body.contact_no,
     remarks: req.body.remarks,
-    creator: req.userData.userId
+    creator: req.userData.userId,
+    creator_name: req.body.creator_name
   });
   Visit.updateOne({ _id: req.params.id, creator: req.userData.userId }, visit).then(result => {
     if (result.n > 0) {
@@ -111,12 +114,13 @@ exports.getVisits = (req, res, next) => {
   const currentPage = +req.query.page;
   const searchValue = req.query.searchValue;
   const period = req.query.period;
+  const userId = req.query.userId;
   const startDate = req.query.startDate;
   const endDate = req.query.endDate;
 
   let postQuery = null;
 
-  if (searchValue != 'undefined') {
+  if (searchValue) {
     postQuery = Visit.find({ customer: new RegExp(searchValue, 'i') });
   } else if (period != 'undefined') {
     let date = new Date();
@@ -124,7 +128,7 @@ exports.getVisits = (req, res, next) => {
     let lastDay = null;
     if (period == 'Daily') {
 
-      firstDay = new Date(date.getFullYear(), date.getMonth(),  date.getDate());
+      firstDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
     }
@@ -138,7 +142,13 @@ exports.getVisits = (req, res, next) => {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
+    if (userId != 'undefined') {
+      console.log('I am called 2');
+      postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
+    }else{
+      console.log('I am called 3');
+      postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
+    }
   } else if (startDate != 'undefined' && endDate != 'undefined') {
     postQuery = Visit.find({ "created_on": { "$gte": startDate, "$lt": endDate } });
   }

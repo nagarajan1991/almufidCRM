@@ -92,7 +92,9 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
   }
 
   selectVisit(visit: Visit) {
+    visit.remarks = null;
     this.visit = visit;
+    this.visitId = visit.id;
   }
 
   onSaveVisit(form: NgForm) {
@@ -100,12 +102,12 @@ export class VisitCreateComponent implements OnInit, OnDestroy {
       return;
     }
     this.isLoading = true;
-    if (this.mode === 'create') {
+    if (this.mode === 'create' && !this.visit) {
       this.visitsService.addVisit(this.customer.value, form.value.contact_no, form.value.remarks, null,
         this.lat, this.lng, form.value.creator);
     } else {
-      /* this.visitsService.updateVisit(this.visitId, form.value.customer, form.value.contact_no, form.value.remarks,
-        null, this.lat, this.lng, form.value.creator);*/
+      this.visitsService.updateVisit(this.visitId, form.value.customer, form.value.contact_no, form.value.remarks,
+        null, this.lat, this.lng, form.value.creator);
     }
   }
 

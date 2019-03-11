@@ -3,4 +3,5 @@ export class User {
     expiresIn: number;
     userId: string;
     userrolevalue: string;
+    email?: string;
 }

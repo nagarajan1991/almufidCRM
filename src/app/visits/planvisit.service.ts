@@ -64,8 +64,8 @@ export class PlanVisitService {
       }));
   }
 
-  getPlanVisitsStatistics(period?: string): Observable<any> {
-    const queryParams = `?period=${period}`;
+  getPlanVisitsStatistics(period?: string, userId?: string): Observable<any> {
+    const queryParams = `?period=${period}&userId=${userId}`;
     return this.http.get<{ message: string, planVisits: any, maxPlanVisits: number }>(
       BACKEND_URL + queryParams
     )

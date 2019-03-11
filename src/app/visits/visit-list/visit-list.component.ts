@@ -87,7 +87,18 @@ export class VisitListComponent implements OnInit, OnDestroy {
   }
   downloadVisits() {
     this.visitsService.downLoadVisits(null, null, this.fromDate, this.toDate).subscribe(visits => {
-      const worksheet: WorkSheet = utils.json_to_sheet(visits);
+      const exportedVisits = visits.map(item => {
+        const exportItem = {
+          'customer': item.customer,
+          'contact_no': item.contact_no,
+          'remarks': item.remarks,
+          'creation_date': item.date,
+          'gmap_handle': `http://maps.google.com/maps?t=k&q=loc:${item.lat}${item.lng}`,
+          'creator_name': item.creator_name
+        };
+        return exportItem;
+      });
+      const worksheet: WorkSheet = utils.json_to_sheet(exportedVisits);
       const workbook: WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
       const wbout: ArrayBuffer = write(workbook, { bookType: 'xlsx', type: 'array' });
       this.createBlobAndDownload(wbout, 'VisitsDataExport.xlsx');
