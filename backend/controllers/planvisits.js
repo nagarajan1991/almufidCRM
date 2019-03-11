@@ -82,6 +82,12 @@ exports.getPlanVisits = (req, res, next) => {
     let date = new Date();
     let firstDay = null;
     let lastDay = null;
+    if (period == 'Daily') {
+
+      firstDay = new Date(date.getFullYear(), date.getMonth(),  date.getDate());
+      lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+
+    }
     if (period == 'Monthly') {
 
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);

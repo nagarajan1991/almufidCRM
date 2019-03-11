@@ -1,31 +1,35 @@
-<img src="src\assets\images\animat-rocket-color.gif" alt="Rocket" class="center">
+<!-- <img src="src\assets\images\animat-rocket-color.gif" alt="Rocket" class="center">
 <p class="mat-body-1" [ngStyle]="{'text-align': 'center'}">
   Page under Construction
   <br/> We are Buidling Something Awesome. Watch this space for more!
-</p>
+</p> -->
 <div class="container">
   <div class="row">
-    <div class="col-md-4">
+    <div *ngIf="g.user.userrolevalue==='SalesManager'" class="col-md-3">
       <div class="card-counter primary">
         <i class="fa fa-users"></i>
         <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
         <span class="count-name">Total Users</span>
       </div>
     </div>
-
-    <div class="col-md-4">
+    <div class="col-xs-12 col-sm-4 col-md-3">
+      <label class="radio-inline">
+        <input type="radio" name="optradio"  (click)="refreshStat('Daily')"  [checked]="selectedPeriod === Daily">Daily</label>
+      <label class="radio-inline">
+        <input type="radio" name="optradio"  (click)="refreshStat('Monthly')" [checked]="selectedPeriod === Monthly">Monthly</label>
+    </div>
+    <div class="col-md-3">
       <div class="card-counter danger">
         <i class="fa fa-suitcase"></i>
-        <span class="count-numbers">{{(planvisitsMonthly$ | async)?.visitCount}}/{{(visitsMonthly$ | async)?.visitCount}}</span>
-        <span class="count-name">Projected/Actual Monthly Visits</span>
+        <span class="count-numbers">{{(planvisits$ | async)?.visitCount}}</span>
+        <span class="count-name">Planned {{selectedPeriod}} Visits</span>
       </div>
     </div>
-
-    <div class="col-md-4">
+    <div class="col-md-3">
       <div class="card-counter success">
         <i class="fa fa-plane"></i>
-        <span class="count-numbers">{{(planVisitsYearly$ | async)?.visitCount}}/{{(visitsYearly$ | async)?.visitCount}}</span>
-        <span class="count-name">Projected/Actual Yearly Visits</span>
+        <span class="count-numbers">{{(visits$ | async)?.visitCount}}</span>
+        <span class="count-name">Actual {{selectedPeriod}} Visits</span>
       </div>
     </div>
   </div>

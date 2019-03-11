@@ -19,10 +19,11 @@ export class DashBoardComponent implements OnInit {
 
   selectedUser:User;
   users$: Observable<any>;
-  visitsMonthly$: Observable<any>;
+  visits$: Observable<any>;
   visitsYearly$: Observable<any>;
-  planvisitsMonthly$: Observable<any>;
+  planvisits$: Observable<any>;
   planVisitsYearly$: Observable<any>;
+  selectedPeriod:string='Daily';
   constructor(private authService: AuthService,
   @Inject(GLOBALS) public g: Global,
   private visitService: VisitsService,
@@ -31,10 +32,14 @@ export class DashBoardComponent implements OnInit {
   }
   ngOnInit(): void {
     this.users$ = this.authService.getUsers();
-    this.visitsMonthly$ = this.visitService.getVisitsStatistics('Monthly');
-    this.visitsYearly$ = this.visitService.getVisitsStatistics('Yearly');
-    this.planvisitsMonthly$ = this.planVisitService.getPlanVisitsStatistics('Monthly');
-    this.planVisitsYearly$ = this.planVisitService.getPlanVisitsStatistics('Yearly');
+    this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod);
+    this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod);
+  }
+
+  refreshStat(period:string){
+    this.selectedPeriod = period;
+    this.visits$ = this.visitService.getVisitsStatistics(period);
+    this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(period);
   }
 
   selectUser(user:User){
