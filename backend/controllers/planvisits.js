@@ -97,12 +97,11 @@ exports.getPlanVisits = (req, res, next) => {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
-    /* if (userId != 'undefined') {
-      postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
+    if (userId != 'undefined') {
+      postQuery = PlanVisit.find({ "date": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
     }else{
-      postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
-    } */
-    postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
+      postQuery = PlanVisit.find({ "date": { "$gte": firstDay, "$lt": lastDay } });
+    }
   } else if ((!period || period == 'undefined') && userId &&  userId != 'undefined') {
     postQuery = PlanVisit.find({ userId: userId });
   } else if (startDate && endDate && startDate != 'undefined' && endDate != 'undefined') {
