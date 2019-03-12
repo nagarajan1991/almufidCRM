@@ -44,12 +44,12 @@ export class VisitListComponent implements OnInit, OnDestroy {
     this.visitsService.getVisits(this.visitsPerPage, this.currentPage);
     this.userId = this.authService.getUserId();
     this.visitsSubb = this.visitsService
-      .getVisitUpdateListener()
-      .subscribe((visitData: { visits: Visit[], visitCount: number }) => {
-        this.isLoading = false;
-        this.totalVisits = visitData.visitCount;
-        this.visits = visitData.visits;
-      });
+    .getVisitUpdateListener()
+    .subscribe((visitData: {visits: Visit[], visitCount: number}) => {
+      this.isLoading = false;
+      this.totalVisits = visitData.visitCount;
+      this.visits = visitData.visits;
+    });
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authStatusSub = this.authService
       .getAuthStatusListener()

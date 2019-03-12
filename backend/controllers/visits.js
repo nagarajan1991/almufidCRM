@@ -120,9 +120,10 @@ exports.getVisits = (req, res, next) => {
 
   let postQuery = null;
 
-  if (searchValue) {
+  if (searchValue && searchValue != 'undefined') {
+    console.log('user search');
     postQuery = Visit.find({ customer: new RegExp(searchValue, 'i') });
-  } else if (period != 'undefined') {
+  } else if (period && period != 'undefined') {
     let date = new Date();
     let firstDay = null;
     let lastDay = null;
@@ -142,6 +143,7 @@ exports.getVisits = (req, res, next) => {
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
+    console.log('date search')
     /* if (userId != 'undefined') {
       console.log('I am called 2');
       postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
@@ -150,15 +152,18 @@ exports.getVisits = (req, res, next) => {
       postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
     } */
     postQuery = Visit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
-  } else if (startDate != 'undefined' && endDate != 'undefined') {
+  } else if (startDate && endDate && startDate != 'undefined' && endDate != 'undefined') {
+    console.log('date search 2')
     postQuery = Visit.find({ "created_on": { "$gte": startDate, "$lt": endDate } });
   }
   else {
+    console.log('normal search')
     postQuery = Visit.find();
   }
 
   let fetchedVisits;
-  if (pageSize && currentPage) {
+  if (pageSize && currentPage && pageSize != 'undefined' && currentPage != 'undefined') {
+    console.log('page search')
     postQuery
       .skip(pageSize * (currentPage - 1))
       .limit(pageSize)
@@ -166,6 +171,7 @@ exports.getVisits = (req, res, next) => {
 
   postQuery
     .then(documents => {
+      console.log(documents)
       fetchedVisits = documents;
       return Visit.count();
     }).then(count => {

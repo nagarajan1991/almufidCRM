@@ -73,11 +73,11 @@ exports.getPlanVisits = (req, res, next) => {
 
   let postQuery = null;
 
-  if (searchValue) {
+  if (searchValue && searchValue!='undefined') {
     postQuery = PlanVisit.find({ customer: new RegExp(searchValue, 'i') });
   }
 
-   if (period != 'undefined') {
+   if (period && period != 'undefined') {
     let date = new Date();
     let firstDay = null;
     let lastDay = null;
@@ -103,9 +103,9 @@ exports.getPlanVisits = (req, res, next) => {
       postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
     } */
     postQuery = PlanVisit.find({ "created_on": { "$gte": firstDay, "$lt": lastDay } });
-  } else if (period == 'undefined' && userId != 'undefined') {
+  } else if ((!period || period == 'undefined') && userId &&  userId != 'undefined') {
     postQuery = PlanVisit.find({ userId: userId });
-  } else if (startDate != 'undefined' && endDate != 'undefined') {
+  } else if (startDate && endDate && startDate != 'undefined' && endDate != 'undefined') {
     postQuery = PlanVisit.find({ "end": { "$gte": startDate, "$lt": endDate } });
   }
   else {
