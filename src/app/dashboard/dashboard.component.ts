@@ -17,6 +17,8 @@ import { User } from '../auth/user.model';
 
 export class DashBoardComponent implements OnInit {
 
+  displayedColumnsPlannedVisits: string[];
+  displayedColumnsVisits: any;
   selectedUser: User;
   users$: Observable<any>;
   visits$: Observable<any>;
@@ -35,6 +37,9 @@ export class DashBoardComponent implements OnInit {
     if (this.g.user.userrolevalue === 'SalesMan') {
       this.selectedUser = this.g.user;
     }
+    this.displayedColumnsVisits = ['date', 'time', 'customer', 'map'];
+    this.displayedColumnsPlannedVisits = ['startdate', 'starttime', 'enddate', 'endtime', 'customer'];
+
     if (this.selectedUser) {
       this.visits$ = this.visitService.getVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);
       this.planvisits$ = this.planVisitService.getPlanVisitsStatistics(this.selectedPeriod, this.selectedUser.userId);

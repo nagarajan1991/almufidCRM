@@ -89,6 +89,7 @@ exports.getPlanVisits = (req, res, next) => {
     }
     if (period == 'Monthly') {
 
+      console.log('monthly block visited');
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -98,9 +99,10 @@ exports.getPlanVisits = (req, res, next) => {
       lastDay = new Date(date.getFullYear(), date.getMonth() + 12, 0);
     }
     if (userId != 'undefined') {
-      postQuery = PlanVisit.find({ "date": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
+      console.log('user id fetched for plan visit');
+      postQuery = PlanVisit.find({ "end": { "$gte": firstDay, "$lt": lastDay }, 'creator':  mongoose.Types.ObjectId(userId) });
     }else{
-      postQuery = PlanVisit.find({ "date": { "$gte": firstDay, "$lt": lastDay } });
+      postQuery = PlanVisit.find({ "end": { "$gte": firstDay, "$lt": lastDay } });
     }
   } else if ((!period || period == 'undefined') && userId &&  userId != 'undefined') {
     postQuery = PlanVisit.find({ userId: userId });
@@ -121,6 +123,7 @@ exports.getPlanVisits = (req, res, next) => {
   postQuery
     .then(documents => {
       fetchedPlanVisits = documents;
+      console.log(fetchedPlanVisits);
       return PlanVisit.count();
     }).then(count => {
       res.status(200).json({

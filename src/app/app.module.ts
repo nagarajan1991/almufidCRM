@@ -17,6 +17,7 @@ import { DashBoardComponent } from './dashboard/dashboard.component';
 import { AgmCoreModule } from '@agm/core';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { GLOBALS, Global } from './visits/global';
+import { MatTableModule } from '@angular/material';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { GLOBALS, Global } from './visits/global';
     AngularMaterialModule,
     VisitsModule,
     MatAutocompleteModule,
+    MatTableModule,
     AgmCoreModule.forRoot ({
       apiKey: 'AIzaSyB06YwnmYDLI9EhtsdtFOTbUA8JGoW90r0'
     })
