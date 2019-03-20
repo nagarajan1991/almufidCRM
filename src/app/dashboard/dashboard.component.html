@@ -5,18 +5,16 @@
 </p> -->
 <div class="container">
   <div class="row">
-    <div *ngIf="g.user.userrolevalue==='SalesManager'" class="col-md-3">
-      <div class="card-counter primary">
-        <i class="fa fa-users"></i>
-        <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
-        <span class="count-name">Total Users</span>
-      </div>
-    </div>
     <div class="col-xs-12 col-sm-4 col-md-3">
-      <label class="radio-inline">
-        <input type="radio" name="optradio" (click)="refreshStat('Daily')" [checked]="selectedPeriod === Daily">Daily</label>
-      <label class="radio-inline">
-        <input type="radio" name="optradio" (click)="refreshStat('Monthly')" [checked]="selectedPeriod === Monthly">Monthly</label>
+      <h3>Group By</h3>
+      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-secondary active">
+          <input type="radio" name="options" id="option1" autocomplete="off" (click)="refreshStat('Daily')" [checked]="selectedPeriod === Daily"> Daily
+        </label>
+        <label class="btn btn-secondary">
+          <input type="radio" name="options" id="option2" autocomplete="off" (click)="refreshStat('Monthly')" [checked]="selectedPeriod === Monthly"> Monthly
+        </label>
+      </div>
     </div>
     <div class="col-md-3">
       <div class="card-counter danger">
@@ -34,6 +32,10 @@
     </div>
   </div>
   <div *ngIf="g.user.userrolevalue==='SalesManager'" class="mt-5 row">
+    <div class="col-xs-12 col-sm-4 col-md-4">
+      Total Users
+      <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
+    </div>
     <div class="col-xs-12 col-sm-4 col-md-4">
       <mat-form-field>
         <mat-select (selectionChange)="selectUser($event.value)" placeholder="Select Users">
@@ -67,31 +69,7 @@
     </div>
   </div>
   <div class="row mt-5">
-    <table mat-table [dataSource]="(visits$ | async)?.visits" class="mat-elevation-z8">
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef> Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortDate' }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef> Time </th>
-        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortTime' }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="customer">
-        <th mat-header-cell *matHeaderCellDef> Customer </th>
-        <td mat-cell *matCellDef="let element"> {{element?.customer}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="map">
-        <th mat-header-cell *matHeaderCellDef> Google Maps Handle</th>
-        <td mat-cell *matCellDef="let element">http://maps.google.com/maps?t=k&q=loc:{{element?.lat}}+{{element?.lng}} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsVisits"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsVisits;"></tr>
-    </table>
-  </div>
-  <div class="row mt-5">
+    <h3>Planned Visits</h3>
     <table mat-table [dataSource]="(planvisits$ | async)?.planVisits" class="mat-elevation-z8">
       <ng-container matColumnDef="startdate">
         <th mat-header-cell *matHeaderCellDef> Start Date </th>
@@ -115,10 +93,36 @@
 
       <ng-container matColumnDef="customer">
         <th mat-header-cell *matHeaderCellDef> Customer </th>
-        <td mat-cell *matCellDef="let element"> {{element?.userId}} </td>
+        <td mat-cell *matCellDef="let element"> {{element?.creator_name}} </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumnsPlannedVisits"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumnsPlannedVisits;"></tr>
+    </table>
+  </div>
+  <div class="row mt-5">
+    <h3>Recorded Visits</h3>
+    <table mat-table [dataSource]="(visits$ | async)?.visits" class="mat-elevation-z8">
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortDate' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef> Time </th>
+        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortTime' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="customer">
+        <th mat-header-cell *matHeaderCellDef> Customer </th>
+        <td mat-cell *matCellDef="let element"> {{element?.customer}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="map">
+        <th mat-header-cell *matHeaderCellDef> Google Maps Handle</th>
+        <td mat-cell *matCellDef="let element">http://maps.google.com/maps?t=k&q=loc:{{element?.lat}}+{{element?.lng}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumnsVisits"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumnsVisits;"></tr>
     </table>
   </div>
 

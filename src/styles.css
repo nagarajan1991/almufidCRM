@@ -27,3 +27,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-content > mat-panel-title, .mat-content > mat-panel-description {
 flex: 0 0 auto;
 }
+
+table {
+  width: 100%;
+}
+
+.basic-container {
+  padding: 30px;
+}
+
+.version-info {
+  font-size: 8pt;
+  float: right;
+}

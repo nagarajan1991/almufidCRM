@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 exports.CreatePlanVisit = (req, res, next) => {
   const planVisit = new PlanVisit({
     userId: req.body.userId,
+    creator_name: req.body.creator_name,
     title: req.body.title,
     start: req.body.start,
     end: req.body.end,

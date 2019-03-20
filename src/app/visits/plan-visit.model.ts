@@ -1,6 +1,7 @@
 export class PlanVisit {
     id?: string;
     userId?: string;
+    creator_name:string;
     title: string;
     start: Date;
     end: Date;

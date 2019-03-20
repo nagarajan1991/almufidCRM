@@ -123,8 +123,10 @@
           />
         </td>
         <td *ngIf="g.user.userId===selectedUser">
-          <button class="btn btn-danger" (click)="events.splice(index, 1); refresh.next();deleteEvent(event)">Delete</button>
-          <button class="ml-3 btn btn-primary" (click)="upSertVisitPlan(event)">Save</button>
+          <div class="btn-group" role="group">
+            <button class="btn btn-danger" (click)="events.splice(index, 1); refresh.next();deleteEvent(event)">Delete</button>
+            <button class="btn btn-primary" (click)="upSertVisitPlan(event)">Save</button>
+          </div>
         </td>
       </tr>
     </tbody>

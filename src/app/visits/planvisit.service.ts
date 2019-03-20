@@ -30,6 +30,7 @@ export class PlanVisitService {
             return {
               id: visit._id,
               userId: visit.userId,
+              creator_name: visit.creator_name,
               title: visit.title,
               start: visit.start,
               end: visit.end,
@@ -75,6 +76,7 @@ export class PlanVisitService {
             return {
               id: visit._id,
               userId: visit.userId,
+              creator_name: visit.creator_name,
               title: visit.title,
               start: visit.start,
               end: visit.end,
@@ -102,6 +104,7 @@ export class PlanVisitService {
           return {
             id: visit._id,
             userId: visit.userId,
+            creator_name: visit.creator_name,
             title: visit.title,
             start: visit.start,
             end: visit.end,
@@ -128,6 +131,7 @@ export class PlanVisitService {
             return {
               id: visit._id,
               userId: visit.userId,
+              creator_name: visit.creator_name,
               title: visit.title,
               start: visit.start,
               end: visit.end,
@@ -161,6 +165,7 @@ export class PlanVisitService {
     return this.http.get<{
       _id: string;
       userId: string,
+      creator_name:string,
       title: string,
       start: Date,
       end: Date,
