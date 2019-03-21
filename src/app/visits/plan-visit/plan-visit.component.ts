@@ -58,6 +58,8 @@ export class PlanVisitComponent implements OnInit {
 
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
+  selectedText: string;
+
   view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
@@ -65,8 +67,8 @@ export class PlanVisitComponent implements OnInit {
   viewDate: Date = new Date();
 
   modalData: {
-    action: string;
-    event: CalendarEvent;
+    action: string,
+    text?: string
   };
 
   actions: CalendarEventAction[] = [
@@ -95,6 +97,8 @@ export class PlanVisitComponent implements OnInit {
   visitsSubb: any;
   users$: Observable<any>;
   selectedUser: string;
+  selectedDate: Date = new Date();
+  selectedEvent: CalendarEvent<any>;
 
   constructor(private modal: NgbModal,
     private authService: AuthService,
@@ -173,6 +177,7 @@ export class PlanVisitComponent implements OnInit {
         this.activeDayIsOpen = true;
       }
     }
+    this.selectedDate = date;
   }
 
   eventTimesChanged({
@@ -187,36 +192,73 @@ export class PlanVisitComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    if (action === 'Edited') {
+      this.selectedText = event.title;
+      this.selectedEvent = event;
+      this.modalData = { action: action, text: 'Edit' };
+      this.modal.open(this.modalContent, { size: 'lg' });
+    } else {
+      this.deleteEvent(event);
+      this.refresh.next();
+    }
   }
 
-  addEvent(): void {
-    this.events.push({
-      title: 'New event',
-      start: startOfDay(new Date()),
-      end: endOfDay(new Date()),
-      color: colors.red,
-      draggable: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      },
-    });
+  performAction(action: string) {
+    if (action === 'add') {
+      const event = {
+        title: this.selectedText,
+        start: startOfDay(this.selectedDate),
+        end: endOfDay(this.selectedDate),
+        userId: this.g.user.userId,
+        creator: this.g.user.userId,
+        creator_name: this.g.user.email,
+        pcolor: 'red',
+        scolor: 'blue',
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true
+        },
+      }
+      this.events.push(event);
+      this.upSertVisitPlan(event);
+    }
+    else {
+      this.upSertVisitPlan(this.selectedEvent);
+    }
     this.refresh.next();
+  }
+  addEvent(): void {
+    this.modalData = { action: 'add', text: 'Add New' };
+    this.modal.open(this.modalContent, { size: 'lg' });
   }
   deleteEvent(event) {
     this.planVisitService.deletePlanVisit(event.id);
+    this.deleteFromLocal(event.id);
+    this.refresh.next();
+  }
+  deleteFromLocal(id: string) {
+    const index: number = this.events.map(item => item.id).indexOf(id);
+    if (index !== -1) {
+      this.events.splice(index, 1);
+    }
   }
   upSertVisitPlan(event: any) {
-
-    event.userId = this.g.user.userId;
-    event.creator = this.g.user.userId;
-    event.creator_name = this.g.user.email;
-    event.pcolor = event.color.primary;
-    event.scolor = event.color.secondary;
+    const eventTemp = {
+      id: event.id,
+      title: this.selectedText,
+      start: event.start,
+      end: event.end,
+      userId: this.g.user.userId,
+      creator: this.g.user.userId,
+      creator_name: this.g.user.email,
+      pcolor: event.pcolor,
+      scolor: event.scolor,
+      draggable: event.draggable,
+      resizable: event.resizable,
+    }
     if (event.id) {
-      this.planVisitService.updatePlanVisit(event.id, event);
+      this.planVisitService.updatePlanVisit(eventTemp.id, eventTemp);
     } else {
       this.planVisitService.addPlanVisit(event);
     }
