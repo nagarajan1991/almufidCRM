@@ -1,7 +1,7 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
@@ -31,6 +31,7 @@ import { MatTableModule } from '@angular/material';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -39,7 +40,7 @@ import { MatTableModule } from '@angular/material';
     MatAutocompleteModule,
     MatTableModule,
     AgmCoreModule.forRoot ({
-      apiKey: 'AIzaSyB06YwnmYDLI9EhtsdtFOTbUA8JGoW90r0'
+      apiKey: 'AIzaSyCz3DgTnhQrcmiGmywQowQvh3oDAqmbFJU'
     })
   ],
   providers: [Title,

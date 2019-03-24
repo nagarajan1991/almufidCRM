@@ -11,3 +11,17 @@ mat-paginator {
 }
 
 
+.mat-form-field--inline {
+  margin-right: 30px;
+}
+
+.export-to-excel {
+  float : right;
+}
+
+.export-to-excel:hover {
+  background: green;
+}
+
+
+

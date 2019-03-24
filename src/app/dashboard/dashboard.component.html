@@ -1,129 +1,178 @@
-<!-- <img src="src\assets\images\animat-rocket-color.gif" alt="Rocket" class="center">
-<p class="mat-body-1" [ngStyle]="{'text-align': 'center'}">
-  Page under Construction
-  <br/> We are Buidling Something Awesome. Watch this space for more!
-</p> -->
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-4 col-md-3">
-      <h3>Group By</h3>
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary active">
-          <input type="radio" name="options" id="option1" autocomplete="off" (click)="refreshStat('Daily')" [checked]="selectedPeriod === Daily"> Daily
-        </label>
-        <label class="btn btn-secondary">
-          <input type="radio" name="options" id="option2" autocomplete="off" (click)="refreshStat('Monthly')" [checked]="selectedPeriod === Monthly"> Monthly
-        </label>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card-counter danger">
-        <i class="fa fa-suitcase"></i>
-        <span class="count-numbers">{{(planvisits$ | async)?.visitCount}}</span>
-        <span class="count-name">Planned {{selectedPeriod}} Visits</span>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card-counter success">
-        <i class="fa fa-plane"></i>
-        <span class="count-numbers">{{(visits$ | async)?.visitCount}}</span>
-        <span class="count-name">Actual {{selectedPeriod}} Visits</span>
-      </div>
-    </div>
-  </div>
-  <div *ngIf="g.user.userrolevalue==='SalesManager'" class="mt-5 row">
-    <div class="col-xs-12 col-sm-4 col-md-4">
-      Total Users
-      <span class="count-numbers">{{(users$ | async)?.userCount}}</span>
-    </div>
-    <div class="col-xs-12 col-sm-4 col-md-4">
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<form #dashboardForm="ngForm" *ngIf="!isLoading">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <div class="container" fxLayoutAlign="center">
+    <mat-card class="tile-card" *ngIf="userrole == 'SalesManager'">
+      <mat-card-header>
+        <div mat-card-avatar>
+            <i class="fa fa-users fa-2x"></i>
+        </div>
+        <mat-card-title
+          >Total Users : {{ (users$ | async)?.userCount }}</mat-card-title
+        >
+      </mat-card-header>
       <mat-form-field>
-        <mat-select (selectionChange)="selectUser($event.value)" placeholder="Select Users">
-          <mat-option *ngFor="let user of (users$ |async)?.users" [value]="user">
-            {{user.fullname}}
+        <mat-select
+          (selectionChange)="selectUser($event.value)"
+          placeholder="Select User"
+        >
+          <mat-option
+            *ngFor="let user of (users$ | async)?.users"
+            [value]="user"
+          >
+            {{ user.fullname }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
-    <div class="col-xs-12 col-sm-4 col-md-4">
-      <div class="well well-sm">
-        <div class="row">
-          <!-- <div class="col-sm-6 col-md-4">
-            <img src="http://placehold.it/380x500" alt="" class="img-rounded img-responsive" />
-          </div> -->
-          <div class="col-sm-6 col-md-8">
-            <h4>
-              {{selectedUser?.fullname}}
-            </h4>
-            <p>
-              <i class="glyphicon glyphicon-envelope"></i>{{selectedUser?.email}}
-              <br />
-              <i class="glyphicon glyphicon-gift"></i>{{selectedUser?.userrolevalue}}
-              <br />
-              <i class="glyphicon glyphicon-gift"></i>{{selectedUser?.mobile}}
-            </p>
-            <!-- Split button -->
-          </div>
+    </mat-card>
+
+    <mat-card class="tile-card">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon matListIcon aria-label="Period">calendar_today</mat-icon>
         </div>
-      </div>
+        <mat-card-title>Group By</mat-card-title>
+      </mat-card-header>
+      <mat-form-field>
+        <mat-select
+          (selectionChange)="refreshStat($event.value)"
+          placeholder="Select Period"
+          matNativeControl required
+        >
+          <mat-option value="Daily" id="Daily">
+            Today/Daily
+          </mat-option>
+          <mat-option value="Monthly" id="Monthly">
+            Monthly
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card>
+
+    <mat-card class="tile-card">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon matListIcon aria-label="Planned Visit"
+            >query_builder</mat-icon
+          >
+        </div>
+        <mat-card-title
+          >Planned Visit :
+          {{ (planvisits$ | async)?.visitCount }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon matListIcon aria-label="Actual Visits">restore</mat-icon>
+        </div>
+        <mat-card-title
+          >Actual Visit&nbsp;&nbsp;&nbsp;&nbsp;:
+          {{ (visits$ | async)?.visitCount }}</mat-card-title
+        >
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <div class="table-container">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon matListIcon aria-label="Actual Visits">restore</mat-icon>
+        </div>
+        <mat-card-title>Actual Visits</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <table
+          mat-table
+          [dataSource]="(visits$ | async)?.visits"
+          class="mat-elevation-z8">
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element?.date | date: "shortDate" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element?.date | date: "shortTime" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let element">{{ element?.customer }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="map">
+            <th mat-header-cell *matHeaderCellDef>Google Maps Handle</th>
+            <td mat-cell *matCellDef="let element">
+              <a
+                href="http://maps.google.com/maps?t=k&q=loc:{{
+                  element?.lat
+                }}+{{ element?.lng }}"
+                target="_blank"
+                >Open Google Maps</a
+              >
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsVisits"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumnsVisits"
+          ></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+
+  <div class="table-container">
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <mat-icon matListIcon aria-label="Planned Visits">query_builder</mat-icon>
+          </div>
+          <mat-card-title>Planned Visits</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <table
+            mat-table [dataSource]="(planvisits$ | async)?.planVisits"
+            class="mat-elevation-z8">
+                <ng-container matColumnDef="startdate">
+                    <th mat-header-cell *matHeaderCellDef> Start Date </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.start | date:'shortDate' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="starttime">
+                    <th mat-header-cell *matHeaderCellDef> Start Time </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.start | date:'shortTime' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="enddate">
+                    <th mat-header-cell *matHeaderCellDef> End Date </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.end | date:'shortDate' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endtime">
+                    <th mat-header-cell *matHeaderCellDef> End Time </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.end | date:'shortTime' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="customer">
+                    <th mat-header-cell *matHeaderCellDef> Customer </th>
+                    <td mat-cell *matCellDef="let element"> {{element?.userId}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsPlannedVisits"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsPlannedVisits;"></tr>
+            </table>
+        </mat-card-content>
+      </mat-card>
     </div>
-  </div>
-  <div class="row mt-5">
-    <h3>Planned Visits</h3>
-    <table mat-table [dataSource]="(planvisits$ | async)?.planVisits" class="mat-elevation-z8">
-      <ng-container matColumnDef="startdate">
-        <th mat-header-cell *matHeaderCellDef> Start Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.start | date:'shortDate' }} </td>
-      </ng-container>
 
-      <ng-container matColumnDef="starttime">
-        <th mat-header-cell *matHeaderCellDef> Start Time </th>
-        <td mat-cell *matCellDef="let element"> {{element?.start | date:'shortTime' }} </td>
-      </ng-container>
 
-      <ng-container matColumnDef="enddate">
-        <th mat-header-cell *matHeaderCellDef> End Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.end | date:'shortDate' }} </td>
-      </ng-container>
 
-      <ng-container matColumnDef="endtime">
-        <th mat-header-cell *matHeaderCellDef> End Time </th>
-        <td mat-cell *matCellDef="let element"> {{element?.end | date:'shortTime' }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="customer">
-        <th mat-header-cell *matHeaderCellDef> Customer </th>
-        <td mat-cell *matCellDef="let element"> {{element?.creator_name}} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsPlannedVisits"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsPlannedVisits;"></tr>
-    </table>
-  </div>
-  <div class="row mt-5">
-    <h3>Recorded Visits</h3>
-    <table mat-table [dataSource]="(visits$ | async)?.visits" class="mat-elevation-z8">
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef> Date </th>
-        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortDate' }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="time">
-        <th mat-header-cell *matHeaderCellDef> Time </th>
-        <td mat-cell *matCellDef="let element"> {{element?.date | date:'shortTime' }} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="customer">
-        <th mat-header-cell *matHeaderCellDef> Customer </th>
-        <td mat-cell *matCellDef="let element"> {{element?.customer}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="map">
-        <th mat-header-cell *matHeaderCellDef> Google Maps Handle</th>
-        <td mat-cell *matCellDef="let element">http://maps.google.com/maps?t=k&q=loc:{{element?.lat}}+{{element?.lng}} </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsVisits"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsVisits;"></tr>
-    </table>
-  </div>
-
-</div>
+</form>

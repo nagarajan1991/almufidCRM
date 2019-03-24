@@ -10,7 +10,9 @@ import { MatInputModule,
   MatSelectModule,
   MatMenuModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatTableModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import { MatExpansionModule,
   MatProgressSpinnerModule,
@@ -34,7 +36,9 @@ import { MatExpansionModule,
     MatSelectModule,
     MatMenuModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatTableModule,
+    MatAutocompleteModule
   ],
   exports: [
     MatInputModule,
@@ -50,7 +54,9 @@ import { MatExpansionModule,
     MatIconModule,
     MatSelectModule,
     MatMenuModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatTableModule,
+    MatAutocompleteModule
   ]
 })
 export class AngularMaterialModule {

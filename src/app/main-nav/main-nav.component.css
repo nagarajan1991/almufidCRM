@@ -35,13 +35,12 @@ ul {
   display: flex;
   }
 
-
 .spacer {
     flex: 1 1 auto;
   }
 
   .mat-icon {
-    padding: 3px;
+    padding: 2px;
   }
 
   material-drawer material-list-item:hover,
@@ -52,5 +51,11 @@ ul {
 
   .toolbar-logo {
     font-size: 25px;
+  }
+
+
+ .username {
+    margin: 0 auto;
+    display: inline-block;
   }
 

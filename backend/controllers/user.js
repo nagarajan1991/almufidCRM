@@ -28,6 +28,33 @@ exports.createUser = (req, res, next) => {
     });
 };
 
+
+exports.updatepwd = (req, res, next) => {
+  let fetchedUser;
+  User.findOne({ email:req.body.email })
+  .then(user => {
+    if(!user) {
+      return res.status(404).json({
+        message: "Auth Failed!"
+      });
+    }
+    fetchedUser = user;
+    return bcrypt.compare(req.body.password, user.password);
+  })
+  .then(result => {
+    if(!result) {
+      return res.status(401).json({
+      message: "Current Password entered is not matching!"
+    });
+  }  })
+  .catch (err => {
+    return res.status(401).json({
+      message: "Invalid authentication credentials!"
+    });
+  });
+  };
+
+
 exports.userLogin = (req, res, next) => {
   let fetchedUser;
   User.findOne({ email:req.body.email })

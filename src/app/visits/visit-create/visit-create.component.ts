@@ -17,7 +17,9 @@ import { MapsAPILoader } from '@agm/core';
 
 export class VisitCreateComponent implements OnInit, OnDestroy {
 
-
+get user(): any {
+    return localStorage.getItem('email');
+}
 
   customer = new FormControl();
   visits$: Observable<Visit[]>;

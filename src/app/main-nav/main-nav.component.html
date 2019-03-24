@@ -8,7 +8,7 @@
   [mode]="(isHandset$ | async) ? 'over' : 'side'"
   [opened]="!(isHandset$ | async)">
   <mat-toolbar color="primary">Menu</mat-toolbar>
-  <mat-nav-list>
+  <mat-nav-list *ngIf="userIsAuthenticated">
   <a
       mat-list-item
       routerLink="/dashboard"
@@ -23,7 +23,7 @@
         <mat-icon matListIcon aria-label="View My Visits" >person_pin_circle</mat-icon>
         View Visits
      </a>
-     <a
+     <a *ngIf="userIsAuthenticated && userrole=='SalesManager'"
         mat-list-item
         routerLink="/viewvisitadmin"
         routerLinkActive="active-list-item" >
@@ -44,13 +44,20 @@
      <mat-icon matListIcon aria-label="Plan My Visit">event</mat-icon>
      Plan My Visit
   </a>
-     <a
+     <a *ngIf="userIsAuthenticated && userrole=='SalesManager'"
         mat-list-item
         routerLink="/auth/signup"
         routerLinkActive="active-list-item">
         <mat-icon matListIcon aria-label="Create User">perm_identity</mat-icon>
         Create User
      </a>
+     <a *ngIf="userIsAuthenticated && userrole=='SalesManager'"
+     mat-list-item
+     routerLink="/auth/resetpwd"
+     routerLinkActive="active-list-item">
+     <mat-icon matListIcon aria-label="Reset Password">vpn_key</mat-icon>
+     Reset User Password
+  </a>
   </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -79,13 +86,18 @@
 
            <button mat-button
            *ngIf="userIsAuthenticated"
-           [matMenuTriggerFor]="menu">
-             User ID: {{user}}
+           [matMenuTriggerFor]="menu"
+           class="username">
+           <mat-icon aria-label="Account">account_circle </mat-icon> {{user}}
              <mat-icon aria-label="Drop Down">arrow_drop_down</mat-icon>
             </button>
            <mat-menu #menu="matMenu">
-              <button  mat-menu-item>
+              <button  mat-menu-item >
                   User Role: {{userrole}} </button>
+
+              <button  mat-menu-item routerLink="/auth/chngpwd">
+                    <mat-icon aria-label="Change Password">fingerprint</mat-icon>
+                    Change Password</button>
 
             <button  mat-menu-item (click)="onLogout()">
               <mat-icon aria-label="Log Out">power_settings_new</mat-icon>

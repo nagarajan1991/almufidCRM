@@ -16,7 +16,7 @@ import { User } from '../auth/user.model';
 })
 
 export class DashBoardComponent implements OnInit {
-
+  isLoading = false;
   displayedColumnsPlannedVisits: string[];
   displayedColumnsVisits: any;
   selectedUser: User;
@@ -65,5 +65,9 @@ export class DashBoardComponent implements OnInit {
     this.selectedUser = user;
     this.refreshStat(this.selectedPeriod);
     return false;
+  }
+
+  get userrole(): any {
+    return localStorage.getItem('userrole');
   }
 }

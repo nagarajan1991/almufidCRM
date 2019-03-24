@@ -90,7 +90,6 @@ exports.getPlanVisits = (req, res, next) => {
     }
     if (period == 'Monthly') {
 
-      console.log('monthly block visited');
       firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
@@ -124,7 +123,6 @@ exports.getPlanVisits = (req, res, next) => {
   postQuery
     .then(documents => {
       fetchedPlanVisits = documents;
-      console.log(fetchedPlanVisits);
       return PlanVisit.count();
     }).then(count => {
       res.status(200).json({

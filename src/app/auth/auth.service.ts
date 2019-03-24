@@ -55,6 +55,16 @@ export class AuthService {
       });
   }
 
+  chngpwd(email: string, password: string) {
+    const authData: AuthData = { fullname: null, email: email, password: password, userrolevalue: null, mobile: null };
+    this.http
+      .post(BACKEND_URL + '/chngpwd', authData)
+      .subscribe(() => error => {
+        this.authStatusListener.next(false);
+      });
+  }
+
+
   login(fullname: string, email: string, password: string, userrolevalue: string, mobile: string) {
     const authData: AuthData = { fullname: fullname, email: email, password: password, userrolevalue: userrolevalue, mobile: mobile };
     this.http.post<{ token: string, expiresIn: number, userId: string, userrolevalue: string }>(

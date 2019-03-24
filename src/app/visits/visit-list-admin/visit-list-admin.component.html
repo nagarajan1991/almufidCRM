@@ -1,7 +1,21 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
+<mat-form-field class="mat-form-field--inline">
+  <input matInput [matDatepicker]="FromDatepicker" (ngModelChange)="fetchVisits()" [(ngModel)]="fromDate"  placeholder="From Date">
+  <mat-datepicker-toggle matSuffix [for]="FromDatepicker">
+  </mat-datepicker-toggle>
+  <mat-datepicker #FromDatepicker></mat-datepicker>
+</mat-form-field>
+<mat-form-field class="mat-form-field--inline">
+  <input matInput [matDatepicker]="ToDatepicker" (ngModelChange)="fetchVisits()" [(ngModel)]="toDate"  placeholder="To Date">
+  <mat-datepicker-toggle matSuffix [for]="ToDatepicker">
+  </mat-datepicker-toggle>
+  <mat-datepicker #ToDatepicker></mat-datepicker>
+</mat-form-field>
+<a mat-raised-button color="primary" (click)="downloadVisits()" class="export-to-excel">Export to Excel</a>
 <mat-accordion multi="true" *ngIf="visits.length>0  && !isLoading" >
   <mat-expansion-panel *ngFor="let visit of visits.reverse()">
     <mat-expansion-panel-header
+    *ngIf="userIsAuthenticated"
     class="right-aligned-header">
         <mat-panel-title>
             <b> Customer : </b>{{visit.customer}}
