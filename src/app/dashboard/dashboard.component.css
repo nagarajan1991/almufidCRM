@@ -1,0 +1,36 @@
+.tile-card {
+    width: 310px;
+    height: 150px;
+    margin-bottom: 20px;
+    margin-right: 18px;
+    float: left;
+}
+
+
+
+.table-container {
+  display: flex;
+  float: left;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  margin-left: 13px;
+  max-height: 500px;
+  width: 970px;
+}
+
+
+.table-container-2 {
+  display: flex;
+  float: left;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-right: 10px;
+  margin-left: 13px;
+  max-height: 500px;
+  width: 970px;
+}
+
+table {
+  width: 100%;
+}
